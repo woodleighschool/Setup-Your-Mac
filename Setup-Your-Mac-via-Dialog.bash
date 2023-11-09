@@ -666,9 +666,9 @@ if [ "$promptForComputerName" == "true" ]; then compNameJSON='{ "title" : "Compu
 if [ "$promptForAssetTag" == "true" ]; then
     assetTagJSON='{   "title" : "Asset Tag",
         "required" : true,
-        "prompt" : "Please enter the (at least) seven-digit Asset Tag",
-        "regex" : "^(AP|IP|CD)?[0-9]{7,}$",
-        "regexerror" : "Please enter (at least) seven digits for the Asset Tag, optionally preceded by either AP, IP or CD."
+        "prompt" : "Please enter the asset tag",
+        "regex" : "^[0-9]{4,}$",
+        "regexerror" : "This asset tag is invalid! (4+ numbers)."
     },'
 fi
 if [ "$promptForRoom" == "true" ]; then roomJSON='{ "title" : "Room","required" : false,"prompt" : "Optional" },'; fi
