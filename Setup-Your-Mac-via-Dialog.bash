@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2001,SC1111,SC1112,SC2143,SC2145,SC2086,SC2089,SC2090
-
+set -xe
 ####################################################################################################
 #
 # Setup Your Mac via swiftDialog
@@ -559,20 +559,39 @@ fi
 # "Welcome" JSON Conditionals (thanks, @rougegoat!)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# prepopulate from UserInfo.plist (for re-runs)
+if [ -f /Users/Shared/UserInfo.plist ]; then
+	plistAssetTag=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Asset Tag" 2>/dev/null)
+	plistCampus=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Campus" 2>/dev/null)
+	plistPosition=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Position" 2>/dev/null)
+	plistUsername=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Username" 2>/dev/null)
+fi
+if [ -n "$plistAssetTag" ]; then
+	assetTagPrefil='"value" : "'${plistAssetTag}'",'
+fi
+if [ -n "$plistCampus" ]; then
+	campusPrefil="${plistCampus}"
+fi
+if [ -n "$plistPosition" ]; then
+	positionPrefil="${plistPosition}"
+fi
+if [ -n "$plistUsername" ]; then
+	usernamePrefil=',"value" : "'${plistUsername}'"'
+fi
+
 # Text Fields
-if [ "$prefillUsername" == "true" ]; then usernamePrefil=',"value" : "'${loggedInUser}'"'; fi
 if [ "$promptForUsername" == "true" ]; then
 	usernameJSON='{ "title" : "Username",
 		"required" : true,
-		"prompt" : "User Name"
-	},'
+		"prompt" : "Username"'${usernamePrefil}'},'
 fi
 if [ "$promptForAssetTag" == "true" ]; then
 	assetTagJSON='{   "title" : "Asset Tag",
         "required" : true,
         "prompt" : "Please enter the asset tag",
+		'${assetTagPrefil}'
         "regex" : "^[0-9]{4,}$",
-        "regexerror" : "This asset tag is invalid! (4+ numbers)."
+        "regexerror" : "Invalid Asset Tag!"
     },'
 fi
 
@@ -584,7 +603,7 @@ if [ "$promptForBuilding" == "true" ]; then
 	if [ -n "$buildingsListRaw" ]; then
 		buildingJSON='{
             "title" : "Campus",
-            "default" : "",
+            "default" : "'$campusPrefil'",
             "required" : true,
             "values" : [
                 '${buildingsList}'
@@ -596,8 +615,8 @@ fi
 if [ "$promptForDepartment" == "true" ]; then
 	if [ -n "$departmentListRaw" ]; then
 		departmentJSON='{
-            "title" : "Usage",
-            "default" : "",
+            "title" : "Position",
+            "default" : "'$positionPrefil'",
             "required" : true,
             "values" : [
                 '${departmentList}'
@@ -606,20 +625,7 @@ if [ "$promptForDepartment" == "true" ]; then
 	fi
 fi
 
-if [ "$promptForPosition" == "true" ]; then
-	if [ -n "${positionListRaw}" ]; then
-		positionSelectJSON='{
-            "title" : "Position",
-            "default" : "",
-            "required" : true,
-            "values" : [
-                '${positionList}'
-            ]
-        },'
-	fi
-fi
-
-selectItemsJSON="${buildingJSON}${departmentJSON}${positionSelectJSON}"
+selectItemsJSON="${buildingJSON}${departmentJSON}"
 selectItemsJSON=$(echo $selectItemsJSON | sed 's/,$//')
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -2274,20 +2280,10 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		# Extract the various values from the welcomeResults JSON
 		###
 
-		computerName=$(get_json_value_welcomeDialog "$welcomeResults" "Computer Name")
-		userName=$(get_json_value_welcomeDialog "$welcomeResults" "User Name")
+		userName=$(get_json_value_welcomeDialog "$welcomeResults" "Username")
 		assetTag=$(get_json_value_welcomeDialog "$welcomeResults" "Asset Tag")
-		symConfiguration=$(get_json_value_welcomeDialog "$welcomeResults" "Configuration" "selectedValue")
-		if [ -n "$presetConfiguration" ]; then symConfiguration="${presetConfiguration}"; fi
-		department=$(get_json_value_welcomeDialog "$welcomeResults" "Department" "selectedValue" | grep -v "Please select your department")
-		room=$(get_json_value_welcomeDialog "$welcomeResults" "Room")
-		building=$(get_json_value_welcomeDialog "$welcomeResults" "Building" "selectedValue" | grep -v "Please select your building")
-
-		if [ -n "${positionListRaw}" ]; then
-			position=$(get_json_value_welcomeDialog "$welcomeResults" "Position" "selectedValue")
-		else
-			position=$(get_json_value_welcomeDialog "$welcomeResults" "Position")
-		fi
+		position=$(get_json_value_welcomeDialog "$welcomeResults" "Position" "selectedValue" | grep -v "Please select your department")
+		campus=$(get_json_value_welcomeDialog "$welcomeResults" "Campus" "selectedValue" | grep -v "Please select your building")
 
 		###
 		# Output the various values from the welcomeResults JSON to the log file
@@ -2295,26 +2291,80 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 		updateScriptLog "WELCOME DIALOG: • User Name: $userName"
 		updateScriptLog "WELCOME DIALOG: • Asset Tag: $assetTag"
-		updateScriptLog "WELCOME DIALOG: • Usage: $department"
-		updateScriptLog "WELCOME DIALOG: • Campus: $building"
+		updateScriptLog "WELCOME DIALOG: • Position: $position"
+		updateScriptLog "WELCOME DIALOG: • Campus: $campus"
 
 		###
 		# Select `policyJSON` based on selected Configuration
 		###
 
+		#symConfiguration=$position
 		policyJSONConfiguration
+
+		###
+		# Create UserInfo properly list based on supplied paramaters
+		###
+
+		cat >/Users/Shared/UserInfo.plist <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Asset Tag</key>
+	<string>$assetTag</string>
+	<key>Campus</key>
+	<string>$campus</string>
+	<key>Position</key>
+	<string>$position</string>
+	<key>Username</key>
+	<string>$userName</string>
+</dict>
+</plist>
+EOF
 
 		###
 		# Evaluate Various User Input
 		###
 
-		# Computer Name
-		if [[ -n "${computerName}" ]]; then
-
-			# UNTESTED, UNSUPPORTED "YOYO" EXAMPLE
+		# Computer/User Name
+		if [[ -n "${userName}" ]]; then
 			updateScriptLog "WELCOME DIALOG: Set Computer Name …"
 			currentComputerName=$(scutil --get ComputerName)
 			currentLocalHostName=$(scutil --get LocalHostName)
+
+			###
+			# Try (well not try...) to Generate Computer Name
+			# Liam Matthews lil' scwipt
+			###
+
+			userNameUpper=$(echo ${userName} | tr '[:lower:]' '[:upper:]')
+
+			# Grabs naming prefix based on campus and position
+			case "$campus" in
+			Senior\ Campus)
+				campusPrefix="S" # Campus prefix for Senior Campus
+				;;
+			Penbank)
+				campusPrefix="P" # Campus prefix for Penbank
+				;;
+			Minimbah)
+				campusPrefix="M" # Campus prefix for Minimbah
+				;;
+			esac
+
+			case "$position" in
+			Student)
+				positionPrefix="S" # Position prefix for students
+				;;
+			Staff)
+				positionPrefix="T" # Position prefix for staff
+				;;
+			Class)
+				positionPrefix="C" # Position prefix for classes
+				;;
+			esac
+
+			computerName="${campusPrefix}${positionPrefix}-${userNameUpper}"
 
 			if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 
@@ -2329,17 +2379,18 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 			fi
 
-		fi
-
-		# User Name
-		if [[ -n "${userName}" ]]; then
-			# UNTESTED, UNSUPPORTED "YOYO" EXAMPLE
+			# User Name
 			reconOptions+="-endUsername \"${userName}\" "
 		fi
 
 		# Asset Tag
 		if [[ -n "${assetTag}" ]]; then
 			reconOptions+="-assetTag \"${assetTag}\" "
+		fi
+
+		# Asset Tag
+		if [[ "${department}" == "Staff" ]]; then
+			reconOptions+="-department \"${department}\" "
 		fi
 
 		# Output `recon` options to log
@@ -2490,17 +2541,11 @@ if [[ -n ${computerName} ]]; then infobox+="**Computer Name:**  \n$computerName 
 if [[ -n ${userName} ]]; then infobox+="**Username:**  \n$userName  \n\n"; fi
 if [[ -n ${assetTag} ]]; then infobox+="**Asset Tag:**  \n$assetTag  \n\n"; fi
 if [[ -n ${infoboxConfiguration} ]]; then infobox+="**Configuration:**  \n$infoboxConfiguration  \n\n"; fi
-if [[ -n ${department} ]]; then infobox+="**Department:**  \n$department  \n\n"; fi
-if [[ -n ${building} ]]; then infobox+="**Building:**  \n$building  \n\n"; fi
-if [[ -n ${room} ]]; then infobox+="**Room:**  \n$room  \n\n"; fi
+if [[ -n ${campus} ]]; then infobox+="**Campus:**  \n$campus  \n\n"; fi
 if [[ -n ${position} ]]; then infobox+="**Position:**  \n$position  \n\n"; fi
 
-if { [[ "${promptForConfiguration}" != "true" ]] && [[ "${configurationDownloadEstimation}" == "true" ]]; } || { [[ "${welcomeDialog}" == "false" ]] || [[ "${welcomeDialog}" == "messageOnly" ]]; }; then
-	updateScriptLog "SETUP YOUR MAC DIALOG: Purposely NOT updating 'infobox'"
-else
-	updateScriptLog "SETUP YOUR MAC DIALOG: Updating 'infobox'"
-	dialogUpdateSetupYourMac "infobox: ${infobox}"
-fi
+updateScriptLog "SETUP YOUR MAC DIALOG: Updating 'infobox'"
+dialogUpdateSetupYourMac "infobox: ${infobox}"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Update Setup Your Mac's helpmessage
