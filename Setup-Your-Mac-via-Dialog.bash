@@ -78,13 +78,13 @@ suppressReconOnPolicy="false"
 moveableInProduction="false"
 
 # [SYM-Helper] An unsorted, comma-separated list of buildings (with possible duplication). If empty, this will be hidden from the user info prompt
-buildingsListRaw="Benson (Ezra Taft) Building,Brimhall (George H.) Building,BYU Conference Center,Centennial Carillon Tower,Chemicals Management Building,Clark (Herald R.) Building,Clark (J. Reuben) Building,Clyde (W.W.) Engineering Building,Crabtree (Roland A.) Technology Building,Ellsworth (Leo B.) Building,Engineering Building,Eyring (Carl F.) Science Center,Grant (Heber J.) Building,Harman (Caroline Hemenway) Building,Harris (Franklin S.) Fine Arts Center,Johnson (Doran) House East,Kimball (Spencer W.) Tower,Knight (Jesse) Building,Lee (Harold B.) Library,Life Sciences Building,Life Sciences Greenhouses,Maeser (Karl G.) Building,Martin (Thomas L.) Building,McKay (David O.) Building,Nicholes (Joseph K.) Building,Smith (Joseph F.) Building,Smith (Joseph) Building,Snell (William H.) Building,Talmage (James E.) Math Sciences/Computer Building,Tanner (N. Eldon) Building,Taylor (John) Building,Wells (Daniel H.) Building"
+buildingsListRaw="Minimbah,Penbank,Senior Campus"
 
 # A sorted, unique, JSON-compatible list of buildings
 buildingsList=$(echo "${buildingsListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
 
 # [SYM-Helper] An unsorted, comma-separated list of departments (with possible duplication). If empty, this will be hidden from the user info prompt
-departmentListRaw="Asset Management,Sales,Australia Area Office,Purchasing / Sourcing,Board of Directors,Strategic Initiatives & Programs,Operations,Business Development,Marketing,Creative Services,Customer Service / Customer Experience,Risk Management,Engineering,Finance / Accounting,Sales,General Management,Human Resources,Marketing,Investor Relations,Legal,Marketing,Sales,Product Management,Production,Corporate Communications,Information Technology / Technology,Quality Assurance,Project Management Office,Sales,Technology"
+departmentListRaw="Student,Staff,Class"
 
 # A sorted, unique, JSON-compatible list of departments
 departmentList=$(echo "${departmentListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
@@ -122,7 +122,6 @@ osVersionExtra=$(sw_vers -productVersionExtra)
 osBuild=$(sw_vers -buildVersion)
 osMajorVersion=$(echo "${osVersion}" | awk -F '.' '{print $1}')
 if [[ -n $osVersionExtra ]] && [[ "${osMajorVersion}" -ge 13 ]]; then osVersion="${osVersion} ${osVersionExtra}"; fi # Report RSR sub version if applicable
-modelName=$(/usr/libexec/PlistBuddy -c 'Print :0:_items:0:machine_name' /dev/stdin <<<"$(system_profiler -xml SPHardwareDataType)")
 reconOptions=""
 exitCode="0"
 
@@ -504,7 +503,7 @@ failureCommandFile=$(mktemp -u /var/tmp/dialogCommandFileFailure.XXX)
 # "Welcome" dialog Title, Message and Icon
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-welcomeMessage="Please enter the **required** information for your ${modelName}, select your preferred **Configuration** then click **Continue** to start applying settings to your new Mac. \n\nOnce completed, the **Wait** button will be enabled and you‘ll be able to review the results before restarting your ${modelName}."
+welcomeMessage="Please enter the **required** information, then click **Continue** to start applying settings to your new Mac. \n\nOnce completed, the **Wait** button will be enabled and you‘ll be able to review the results before restarting."
 
 if [[ -n "${supportTeamName}" ]]; then
 
@@ -530,10 +529,7 @@ fi
 
 welcomeMessage+="\n\n---"
 
-if [[ "${brandingBannerDisplayText}" == "true" ]]; then
-	welcomeBannerText="Happy $(date +'%A'), ${loggedInUserFirstname}!  \nWelcome to your new ${modelName}"
-else welcomeBannerText=""; fi
-welcomeCaption="Please review the above video, then click Continue."
+welcomeBannerText=""
 
 # Cache the hosted custom welcomeBannerImage
 if [[ $welcomeBannerImage == *"http"* ]]; then
@@ -667,11 +663,11 @@ welcomeJSON='
 # "Setup Your Mac" dialog Title, Message, Icon and Overlay Icon
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-title="Setting up ${loggedInUserFirstname}‘s ${modelName}"
-message="Please wait while the following apps are installed …"
+title="<Setting up title>"
+message="Please wait while your Mac is being configured..."
 
 if [[ "${brandingBannerDisplayText}" == "true" ]]; then
-	bannerText="Setting up ${loggedInUserFirstname}‘s ${modelName}"
+	bannerText="<Setting up banner>"
 else
 	bannerText=""
 fi
@@ -790,25 +786,25 @@ function policyJSONConfiguration() {
 
 	case ${symConfiguration} in
 
-	"${configurationOneName}")
+        "${configurationOneName}")
 
-		overlayoverride=""
-		policyJSON='
+overlayoverride=""
+            policyJSON='
             {
                 "steps": [
-                    {
+        {
                         "listitem": "Rosetta",
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_8bac19160fabb0c8e7bac97b37b51d2ac8f38b7100b6357642d9505645d37b52",
                         "progresstext": "Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor.",
                         "trigger_list": [
-                            {
-                                "trigger": "rosettaInstall",
-                                "validation": "None"
-                            },
+                                         {
+                                            "trigger": "rosettaInstall",
+                                            "validation": "None"
+},
                             {
                                 "trigger": "rosetta",
                                 "validation": "Local"
-                            }
+                                         }
                         ]
                     },
                     {
@@ -816,10 +812,10 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_f9ba35bd55488783456d64ec73372f029560531ca10dfa0e8154a46d7732b913",
                         "progresstext": "FileVault is built-in to macOS and provides full-disk encryption to help prevent unauthorized access to your Mac.",
                         "trigger_list": [
-                            {
-                                "trigger": "filevault",
-                                "validation": "Local"
-                            }
+                                         {
+                                            "trigger": "filevault",
+                                            "validation": "Local"
+                                         }
                         ]
                     },
                     {
@@ -827,10 +823,10 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_c70f1acf8c96b99568fec83e165d2a534d111b0510fb561a283d32aa5b01c60c",
                         "progresstext": "You’ll enjoy next-gen protection with Sophos Endpoint which doesn’t rely on signatures to catch malware.",
                         "trigger_list": [
-                            {
-                                "trigger": "sophosEndpoint",
-                                "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
-                            }
+                                         {
+                                            "trigger": "sophosEndpoint",
+                                            "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
+                                         }
                         ]
                     },
                     {
@@ -838,10 +834,10 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_0f68be689684a00a3a054d71a31e43e2362f96c16efa5a560fb61bc1bf41901c",
                         "progresstext": "Remotely validating Sophos Endpoint services …",
                         "trigger_list": [
-                            {
-                                "trigger": "symvSophosEndpointRTS",
-                                "validation": "Remote"
-                            }
+                                         {
+                                            "trigger": "symvSophosEndpointRTS",
+                                            "validation": "Remote"
+                                         }
                         ]
                     },
                     {
@@ -849,8 +845,8 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_acbf39d8904ad1a772cf71c45d93e373626d379a24f8b1283b88134880acb8ef",
                         "progresstext": "Use Palo Alto GlobalProtect to establish a Virtual Private Network (VPN) connection to Church headquarters.",
                         "trigger_list": [
-                            {
-                                "trigger": "globalProtect",
+                                         {
+                                            "trigger": "globalProtect",
                                 "validation": "/Applications/GlobalProtect.app/Contents/Info.plist"
                             }
                         ]
@@ -877,8 +873,8 @@ function policyJSONConfiguration() {
                             },
                             {
                                 "trigger": "reconAtReboot",
-                                "validation": "None"
-                            }
+                                            "validation": "None"
+                                         }
                         ]
                     },
                     {
@@ -886,36 +882,36 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
                         "progresstext": "A listing of your Mac’s apps and settings — its inventory — is sent automatically to the Jamf Pro server daily.",
                         "trigger_list": [
-                            {
-                                "trigger": "recon",
-                                "validation": "recon"
-                            }
+                                         {
+                                            "trigger": "recon",
+                                            "validation": "recon"
+                                         }
                         ]
                     }
                 ]
             }
             '
-		;;
+            ;;
 
-	"${configurationTwoName}")
+    "${configurationTwoName}")
 
-		overlayoverride=""
-		policyJSON='
+overlayoverride=""
+            policyJSON='
             {
                 "steps": [
-                    {
+        {
                         "listitem": "Rosetta",
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_8bac19160fabb0c8e7bac97b37b51d2ac8f38b7100b6357642d9505645d37b52",
                         "progresstext": "Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor.",
                         "trigger_list": [
-                            {
-                                "trigger": "rosettaInstall",
-                                "validation": "None"
-                            },
+                                         {
+                                            "trigger": "rosettaInstall",
+                                            "validation": "None"
+},
                             {
                                 "trigger": "rosetta",
                                 "validation": "Local"
-                            }
+                                         }
                         ]
                     },
                     {
@@ -923,10 +919,10 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_f9ba35bd55488783456d64ec73372f029560531ca10dfa0e8154a46d7732b913",
                         "progresstext": "FileVault is built-in to macOS and provides full-disk encryption to help prevent unauthorized access to your Mac.",
                         "trigger_list": [
-                            {
-                                "trigger": "filevault",
-                                "validation": "Local"
-                            }
+                                         {
+                                            "trigger": "filevault",
+                                            "validation": "Local"
+                                         }
                         ]
                     },
                     {
@@ -934,10 +930,10 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_c70f1acf8c96b99568fec83e165d2a534d111b0510fb561a283d32aa5b01c60c",
                         "progresstext": "You’ll enjoy next-gen protection with Sophos Endpoint which doesn’t rely on signatures to catch malware.",
                         "trigger_list": [
-                            {
-                                "trigger": "sophosEndpoint",
-                                "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
-                            }
+                                         {
+                                            "trigger": "sophosEndpoint",
+                                            "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
+                                         }
                         ]
                     },
                     {
@@ -945,8 +941,8 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_0f68be689684a00a3a054d71a31e43e2362f96c16efa5a560fb61bc1bf41901c",
                         "progresstext": "Locally validating Sophos Endpoint services …",
                         "trigger_list": [
-                            {
-                                "trigger": "sophosEndpointServices",
+                                         {
+                                            "trigger": "sophosEndpointServices",
                                 "validation": "Local"
                             }
                         ]
@@ -1010,8 +1006,8 @@ function policyJSONConfiguration() {
                             },
                             {
                                 "trigger": "reconAtReboot",
-                                "validation": "None"
-                            }
+                                            "validation": "None"
+                                         }
                         ]
                     },
                     {
@@ -1019,8 +1015,8 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
                         "progresstext": "A listing of your Mac’s apps and settings — its inventory — is sent automatically to the Jamf Pro server daily.",
                         "trigger_list": [
-                            {
-                                "trigger": "recon",
+                                         {
+                                            "trigger": "recon",
                                 "validation": "recon"
                             }
                         ]
@@ -1043,12 +1039,12 @@ function policyJSONConfiguration() {
                         "trigger_list": [
                             {
                                 "trigger": "rosettaInstall",
-                                "validation": "None"
-                            },
+                                            "validation": "None"
+},
                             {
                                 "trigger": "rosetta",
                                 "validation": "Local"
-                            }
+                                         }
                         ]
                     },
                     {
@@ -1056,8 +1052,8 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_f9ba35bd55488783456d64ec73372f029560531ca10dfa0e8154a46d7732b913",
                         "progresstext": "FileVault is built-in to macOS and provides full-disk encryption to help prevent unauthorized access to your Mac.",
                         "trigger_list": [
-                            {
-                                "trigger": "filevault",
+                                         {
+                                            "trigger": "filevault",
                                 "validation": "Local"
                             }
                         ]
@@ -1187,8 +1183,8 @@ function policyJSONConfiguration() {
                             },
                             {
                                 "trigger": "reconAtReboot",
-                                "validation": "None"
-                            }
+                                            "validation": "None"
+                                         }
                         ]
                     },
                     {
@@ -1196,36 +1192,36 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
                         "progresstext": "A listing of your Mac’s apps and settings — its inventory — is sent automatically to the Jamf Pro server daily.",
                         "trigger_list": [
-                            {
-                                "trigger": "recon",
-                                "validation": "recon"
-                            }
+                                         {
+                                            "trigger": "recon",
+                                            "validation": "recon"
+                                         }
                         ]
                     }
                 ]
             }
             '
-		;;
+            ;;
 
-	*) # Catch-all (i.e., used when `welcomeDialog` is set to `video`, `messageOnly` or `false`)
+    *) # Catch-all (i.e., used when `welcomeDialog` is set to `video`, `messageOnly` or `false`)
 
-		overlayoverride=""
-		policyJSON='
+overlayoverride=""
+            policyJSON='
             {
                 "steps": [
-                    {
+        {
                         "listitem": "Rosetta",
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_8bac19160fabb0c8e7bac97b37b51d2ac8f38b7100b6357642d9505645d37b52",
                         "progresstext": "Rosetta enables a Mac with Apple silicon to use apps built for a Mac with an Intel processor.",
                         "trigger_list": [
-                            {
-                                "trigger": "rosettaInstall",
-                                "validation": "None"
-                            },
+                                         {
+                                            "trigger": "rosettaInstall",
+                                            "validation": "None"
+},
                             {
                                 "trigger": "rosetta",
                                 "validation": "Local"
-                            }
+                                         }
                         ]
                     },
                     {
@@ -1233,8 +1229,8 @@ function policyJSONConfiguration() {
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_f9ba35bd55488783456d64ec73372f029560531ca10dfa0e8154a46d7732b913",
                         "progresstext": "FileVault is built-in to macOS and provides full-disk encryption to help prevent unauthorized access to your Mac.",
                         "trigger_list": [
-                            {
-                                "trigger": "filevault",
+                                         {
+                                            "trigger": "filevault",
                                 "validation": "Local"
                             }
                         ]
@@ -1280,10 +1276,10 @@ function policyJSONConfiguration() {
                             },
                             {
                                 "trigger": "reconAtReboot",
-                                "validation": "None"
-                            }
+                                            "validation": "None"
+                                         }
                         ]
-                    },
+},
                     {
                         "listitem": "Computer Inventory",
                         "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
@@ -1298,9 +1294,9 @@ function policyJSONConfiguration() {
                 ]
             }
             '
-		;;
+            ;;
 
-	esac
+    esac
 
 }
 
@@ -1489,7 +1485,7 @@ function finalise() {
 			updateScriptLog "Display Failure dialog: ${failureDialog}"
 
 			killProcess "caffeinate"
-			if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title: Sorry ${loggedInUserFirstname}, something went sideways"; fi
+			if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title: Sorry, something went sideways"; fi
 			dialogUpdateSetupYourMac "icon: SF=xmark.circle.fill,weight=bold,colour1=#BB1717,colour2=#F31F1F"
 			dialogUpdateSetupYourMac "progresstext: Failures detected. Please click Continue for troubleshooting information."
 			dialogUpdateSetupYourMac "button1text: Continue …"
@@ -1507,7 +1503,7 @@ function finalise() {
 			updateScriptLog "Jamf Pro Policy Name Failures:"
 			updateScriptLog "${jamfProPolicyNameFailures}"
 
-			failureMessage="A failure has been detected, ${loggedInUserFirstname}. \n\nPlease complete the following steps:\n1. Reboot and login to your ${modelName}  \n2. Login to Self Service  \n3. Re-run any failed policy listed below  \n\nThe following failed:  \n${jamfProPolicyNameFailures}"
+			failureMessage="Something went wrong!\n\nFailed policies:\n${jamfProPolicyNameFailures}"
 
 			if [[ -n "${supportTeamName}" ]]; then
 
@@ -1550,13 +1546,13 @@ function finalise() {
 			updateScriptLog "Display Failure dialog: ${failureDialog}"
 
 			killProcess "caffeinate"
-			if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title: Sorry ${loggedInUserFirstname}, something went sideways"; fi
+			if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title: Sorry, something went sideways"; fi
 			dialogUpdateSetupYourMac "icon: SF=xmark.circle.fill,weight=bold,colour1=#BB1717,colour2=#F31F1F"
 			dialogUpdateSetupYourMac "progresstext: Failures detected."
 			dialogUpdateSetupYourMac "button1text: ${button1textCompletionActionOption}"
 			dialogUpdateSetupYourMac "button1: enable"
 			dialogUpdateSetupYourMac "progress: reset"
-			dialogUpdateSetupYourMac "progresstext: Errors detected; please ${progressTextCompletionAction// and /} your ${modelName}, ${loggedInUserFirstname}."
+			dialogUpdateSetupYourMac "progresstext: Errors detected; please try again."
 
 			quitScript "1"
 
@@ -1567,9 +1563,9 @@ function finalise() {
 		outputLineNumberInVerboseDebugMode
 		updateScriptLog "All polcies executed successfully"
 
-		if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title: ${loggedInUserFirstname}‘s ${modelName} is ready!"; fi
+		if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title:Ready, set, done!"; fi
 		dialogUpdateSetupYourMac "icon: SF=checkmark.circle.fill,weight=bold,colour1=#00ff44,colour2=#075c1e"
-		dialogUpdateSetupYourMac "progresstext: Complete! Please ${progressTextCompletionAction}enjoy your new ${modelName}, ${loggedInUserFirstname}!"
+		dialogUpdateSetupYourMac "progresstext: Complete! Please restart to apply the configuration."
 		dialogUpdateSetupYourMac "progress: complete"
 		dialogUpdateSetupYourMac "button1text: ${button1textCompletionActionOption}"
 		dialogUpdateSetupYourMac "button1: enable"
