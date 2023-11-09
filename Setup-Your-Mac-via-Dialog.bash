@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2001,SC1111,SC1112,SC2143,SC2145,SC2086,SC2089,SC2090
-set -xe
+
 ####################################################################################################
 #
 # Setup Your Mac via swiftDialog
@@ -2298,7 +2298,18 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		# Select `policyJSON` based on selected Configuration
 		###
 
-		symConfiguration=$position
+		case "$position" in
+		Class)
+			symConfiguration="Students"
+			;;
+		Student)
+			symConfiguration="Students"
+			;;
+		Staff)
+			symConfiguration="Staff"
+			;;
+		esac
+
 		policyJSONConfiguration
 
 		###
