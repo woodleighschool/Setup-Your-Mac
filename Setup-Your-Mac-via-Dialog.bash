@@ -2298,7 +2298,7 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		# Select `policyJSON` based on selected Configuration
 		###
 
-		#symConfiguration=$position
+		symConfiguration=$position
 		policyJSONConfiguration
 
 		###
