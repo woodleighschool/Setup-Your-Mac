@@ -96,19 +96,19 @@ positionListRaw="Developer,Management,Sales,Marketing"
 positionList=$(echo "${positionListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
 
 # [SYM-Helper] Branding overrides
-brandingBanner="https://img.freepik.com/free-vector/green-abstract-geometric-wallpaper_52683-29623.jpg" # Image by pikisuperstar on Freepik
+brandingBanner="" # Image by pikisuperstar on Freepik
 brandingBannerDisplayText="false"
-brandingIconLight="https://cdn-icons-png.flaticon.com/512/979/979585.png"
-brandingIconDark="https://cdn-icons-png.flaticon.com/512/740/740878.png"
+brandingIconLight="https://avatars.githubusercontent.com/u/112675474"
+brandingIconDark="https://avatars.githubusercontent.com/u/112675474"
 
 # [SYM-Helper] IT Support Variables - Use these if the default text is fine but you want your org's info inserted instead
-supportTeamName="Support Team Name"
-supportTeamPhone="+1 (801) 555-1212"
-supportTeamEmail="support@domain.com"
-supportTeamWebsite="support.domain.com"
+supportTeamName="Woodleigh HelpDesk"
+supportTeamPhone=""
+supportTeamEmail="helpdesk@woodleigh.vic.edu.au"
+supportTeamWebsite="https://servicedesk.woodleigh.vic.edu.au/"
 supportTeamHyperlink="[${supportTeamWebsite}](https://${supportTeamWebsite})"
-supportKB="KB8675309"
-supportTeamErrorKB="[${supportKB}](https://servicenow.company.com/support?id=kb_article_view&sysparm_article=${supportKB}#Failures)"
+supportKB=""
+supportTeamErrorKB=""
 
 # Disable the "Continue" button in the User Input "Welcome" dialog until Dynamic Download Estimates have complete [ true | false ] (thanks, @Eltord!)
 lockContinueBeforeEstimations="false"
@@ -764,12 +764,12 @@ function policyJSONConfiguration() {
 
 	case ${symConfiguration} in
 
-	"Staff")
+        "Staff")
 		# Fetch JSON data for Staff configuration
-		policyJSON="$(curl -sL $jsonURL/staff.json)"
-		;;
+            policyJSON="$(curl -sL $jsonURL/staff.json)"
+            ;;
 
-	"Students")
+    "Students")
 		# Fetch JSON data for Students configuration
 		policyJSON="$(curl -sL $jsonURL/student.json)"
 		;;
@@ -777,9 +777,9 @@ function policyJSONConfiguration() {
 	*) # Catch-all
 		# Fetch default JSON data
 		policyJSON="$(curl -sL $jsonURL/default.json)"
-		;;
+            ;;
 
-	esac
+    esac
 
 }
 
@@ -1072,14 +1072,14 @@ function run_jamf_trigger() {
 
 	if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 
-		updateScriptLog "SETUP YOUR MAC DIALOG: DEBUG MODE: TRIGGER: $jamfBinary policy -event $trigger ${suppressRecon}"
+		updateScriptLog "SETUP YOUR MAC DIALOG: DEBUG MODE: TRIGGER: $jamfBinary policy -id $trigger ${suppressRecon}"
 		sleep "${debugModeSleepAmount}"
 
 	else
 
-		updateScriptLog "SETUP YOUR MAC DIALOG: RUNNING: $jamfBinary policy -event $trigger"
-		eval "${jamfBinary} policy -event ${trigger} ${suppressRecon}" # Add comment for policy testing
-		# eval "${jamfBinary} policy -event ${trigger} ${suppressRecon} -verbose | tee -a ${scriptLog}"    # Remove comment for policy testing
+		updateScriptLog "SETUP YOUR MAC DIALOG: RUNNING: $jamfBinary policy -id $trigger"
+		eval "${jamfBinary} policy -id ${trigger} ${suppressRecon}" # Add comment for policy testing
+		# eval "${jamfBinary} policy -id ${trigger} ${suppressRecon} -verbose | tee -a ${scriptLog}"    # Remove comment for policy testing
 
 	fi
 
@@ -1224,7 +1224,7 @@ function validatePolicyResult() {
 		else
 			updateScriptLog "SETUP YOUR MAC DIALOG: Remotely Validate '${trigger}' '${validation}'"
 			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
-			result=$("${jamfBinary}" policy -event "${trigger}" | grep "Script result:")
+			result=$("${jamfBinary}" policy -id "${trigger}" | grep "Script result:")
 			if [[ "${result}" == *"Running"* ]]; then
 				dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Running"
 			elif [[ "${result}" == *"Installed"* || "${result}" == *"Success"* ]]; then

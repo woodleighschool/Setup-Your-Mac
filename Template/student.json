@@ -51,18 +51,18 @@
       "trigger_list": [
         {
           "trigger": "41",
-          "validation": "None"
+          "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
         }
       ]
     },
     {
-      "listitem": "Adobe Creative Cloud 2023",
+      "listitem": "Adobe Creative Cloud",
       "icon": "https://apse2.ics.services.jamfcloud.com/icon/hash_3e1b24c9487ee693f16367fefdfb940cae50e40b692170e68a6716dc75d3cca2",
       "progresstext": "Installing Creative Cloud",
       "trigger_list": [
         {
           "trigger": "38",
-          "validation": "None"
+          "validation": "/Applications/Utilities/Adobe Creative Cloud/ACC/Creative Cloud.app/Contents/Info.plist"
         }
       ]
     },
@@ -73,7 +73,7 @@
       "trigger_list": [
         {
           "trigger": "40",
-          "validation": "None"
+          "validation": "/Applications/Microsoft Word.app/Contents/Info.plist"
         }
       ]
     },
@@ -84,7 +84,7 @@
       "trigger_list": [
         {
           "trigger": "39",
-          "validation": "None"
+          "validation": "/Applications/Google Chrome.app/Contents/Info.plist"
         }
       ]
     },
@@ -95,7 +95,7 @@
       "trigger_list": [
         {
           "trigger": "84",
-          "validation": "None"
+          "validation": "/Applications/NoMAD.app/Contents/Info.plist"
         }
       ]
     },
@@ -106,7 +106,7 @@
       "trigger_list": [
         {
           "trigger": "185",
-          "validation": "None"
+          "validation": "/Applications/Vivi.app/Contents/Info.plist"
         }
       ]
     },
@@ -117,7 +117,7 @@
       "trigger_list": [
         {
           "trigger": "107",
-          "validation": "None"
+          "validation": "/Applications/zoom.us.app/Contents/Info.plist"
         }
       ]
     },
