@@ -1,0 +1,15 @@
+{
+  "steps": [
+    {
+      "listitem": "Update Inventory",
+      "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
+      "progresstext": "Updating Inventory",
+      "trigger_list": [
+        {
+          "trigger": "recon",
+          "validation": "recon"
+        }
+      ]
+    }
+  ]
+}
