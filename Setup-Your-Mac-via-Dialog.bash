@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0"
+scriptVersion="1.13.0-2"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -75,7 +75,7 @@ promptForConfiguration="false" # Removes the Configuration dropdown entirely and
 suppressReconOnPolicy="false"
 
 # Disables the Blurscreen enabled by default in Production
-moveableInProduction="false"
+moveableInProduction="true"
 
 # [SYM-Helper] An unsorted, comma-separated list of buildings (with possible duplication). If empty, this will be hidden from the user info prompt
 buildingsListRaw="Minimbah,Penbank,Senior Campus"
@@ -1072,14 +1072,14 @@ function run_jamf_trigger() {
 
 	if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 
-		updateScriptLog "SETUP YOUR MAC DIALOG: DEBUG MODE: TRIGGER: $jamfBinary policy -id $trigger ${suppressRecon}"
+		updateScriptLog "SETUP YOUR MAC DIALOG: DEBUG MODE: TRIGGER: $jamfBinary policy -event $trigger ${suppressRecon}"
 		sleep "${debugModeSleepAmount}"
 
 	else
 
-		updateScriptLog "SETUP YOUR MAC DIALOG: RUNNING: $jamfBinary policy -id $trigger"
-		eval "${jamfBinary} policy -id ${trigger} ${suppressRecon}" # Add comment for policy testing
-		# eval "${jamfBinary} policy -id ${trigger} ${suppressRecon} -verbose | tee -a ${scriptLog}"    # Remove comment for policy testing
+		updateScriptLog "SETUP YOUR MAC DIALOG: RUNNING: $jamfBinary policy -event $trigger"
+		eval "${jamfBinary} policy -event ${trigger} ${suppressRecon}" # Add comment for policy testing
+		# eval "${jamfBinary} policy -event ${trigger} ${suppressRecon} -verbose | tee -a ${scriptLog}"    # Remove comment for policy testing
 
 	fi
 
@@ -1224,7 +1224,7 @@ function validatePolicyResult() {
 		else
 			updateScriptLog "SETUP YOUR MAC DIALOG: Remotely Validate '${trigger}' '${validation}'"
 			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
-			result=$("${jamfBinary}" policy -id "${trigger}" | grep "Script result:")
+			result=$("${jamfBinary}" policy -event "${trigger}" | grep "Script result:")
 			if [[ "${result}" == *"Running"* ]]; then
 				dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Running"
 			elif [[ "${result}" == *"Installed"* || "${result}" == *"Success"* ]]; then

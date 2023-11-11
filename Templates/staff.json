@@ -3,7 +3,7 @@
     {
       "listitem": "Install Rosetta",
       "icon": "",
-      "progresstext": "Processing policy: DEPTEST - Install Rosetta - VIRT",
+      "progresstext": "Installing Rosetta",
       "trigger_list": [
         {
           "trigger": "dep_install_rosetta",
@@ -12,9 +12,9 @@
       ]
     },
     {
-      "listitem": "Branding Tools",
+      "listitem": "Install Woodleigh Tools",
       "icon": "",
-      "progresstext": "Processing policy: Install Branding Tools",
+      "progresstext": "Installing Outset, Dockutil, Desktoppr and Branding",
       "trigger_list": [
         {
           "trigger": "dep_branding_tools",
@@ -23,9 +23,9 @@
       ]
     },
     {
-      "listitem": "NoMAD Login",
+      "listitem": "Install NoMAD Login",
       "icon": "",
-      "progresstext": "Processing policy: DEPTEST - Install NoMAD Login - VIRT",
+      "progresstext": "Installing NoMAD Login",
       "trigger_list": [
         {
           "trigger": "dep_nomad_login",
