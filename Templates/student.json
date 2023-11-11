@@ -2,7 +2,7 @@
   "steps": [
     {
       "listitem": "Install Rosetta",
-      "icon": "",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/rosetta.png",
       "progresstext": "Installing Rosetta",
       "trigger_list": [
         {
@@ -13,7 +13,7 @@
     },
     {
       "listitem": "Install Woodleigh Tools",
-      "icon": "",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
       "progresstext": "Installing Outset, Dockutil, Desktoppr and Branding",
       "trigger_list": [
         {
@@ -24,7 +24,7 @@
     },
     {
       "listitem": "Install NoMAD Login",
-      "icon": "",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/nomadlogin.png",
       "progresstext": "Installing NoMAD Login",
       "trigger_list": [
         {
@@ -35,7 +35,7 @@
     },
     {
       "listitem": "Configure Sudo Lock",
-      "icon": "",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/sudolock.png",
       "progresstext": "Locking Down Sudo to Authorised Users",
       "trigger_list": [
         {
