@@ -1,6 +1,39 @@
 {
   "steps": [
     {
+      "listitem": "Set Tokenadmin Password",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Resetting The Temperary Tokenadmin Password",
+      "trigger_list": [
+        {
+          "trigger": "dep_update_tokenadmin_password",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Generate Bootstrap Token",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Generating The Bootstrap Token",
+      "trigger_list": [
+        {
+          "trigger": "dep_boostrap_token",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Setup Staff Woodmin",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Creating the Woodleigh Admin Account",
+      "trigger_list": [
+        {
+          "trigger": "dep_staff_woodmin",
+          "validation": "None"
+        }
+      ]
+    },
+    {
       "listitem": "Install Rosetta",
       "icon": "",
       "progresstext": "Installing Rosetta",

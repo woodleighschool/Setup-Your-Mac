@@ -1,6 +1,39 @@
 {
   "steps": [
     {
+      "listitem": "Set Tokenadmin Password",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Resetting The Temperary Tokenadmin Password",
+      "trigger_list": [
+        {
+          "trigger": "dep_update_tokenadmin_password",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Generate Bootstrap Token",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Generating The Bootstrap Token",
+      "trigger_list": [
+        {
+          "trigger": "dep_boostrap_token",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Setup Student Woodmin",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Creating the Woodleigh Admin Account",
+      "trigger_list": [
+        {
+          "trigger": "dep_student_woodmin",
+          "validation": "None"
+        }
+      ]
+    },
+    {
       "listitem": "Update Inventory",
       "icon": "https://ics.services.jamfcloud.com/icon/hash_ff2147a6c09f5ef73d1c4406d00346811a9c64c0b6b7f36eb52fcb44943d26f9",
       "progresstext": "Updating Inventory",

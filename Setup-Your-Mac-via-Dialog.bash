@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2001,SC1111,SC1112,SC2143,SC2145,SC2086,SC2089,SC2090
-
+set -xe
 ####################################################################################################
 #
 # Setup Your Mac via swiftDialog
@@ -760,16 +760,16 @@ function policyJSONConfiguration() {
 	updateScriptLog "WELCOME DIALOG: PolicyJSON Configuration: $symConfiguration"
 
 	# Define the URL to fetch the JSON data
-	jsonURL="https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Template/"
+	jsonURL="https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Templates/"
 
 	case ${symConfiguration} in
 
-        "Staff")
+	"Staff")
 		# Fetch JSON data for Staff configuration
-            policyJSON="$(curl -sL $jsonURL/staff.json)"
-            ;;
+		policyJSON="$(curl -sL $jsonURL/staff.json)"
+		;;
 
-    "Students")
+	"Students")
 		# Fetch JSON data for Students configuration
 		policyJSON="$(curl -sL $jsonURL/student.json)"
 		;;
@@ -777,9 +777,9 @@ function policyJSONConfiguration() {
 	*) # Catch-all
 		# Fetch default JSON data
 		policyJSON="$(curl -sL $jsonURL/default.json)"
-            ;;
+		;;
 
-    esac
+	esac
 
 }
 
