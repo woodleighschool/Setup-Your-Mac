@@ -36,7 +36,7 @@
     {
       "listitem": "Install Woodleigh Tools",
       "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
-      "progresstext": "Installing Outset, Dockutil, Desktoppr and Branding",
+      "progresstext": "Installing Dockutil, Desktoppr and Branding",
       "trigger_list": [
         {
           "trigger": "dep_branding_tools",
