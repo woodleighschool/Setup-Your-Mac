@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2001,SC1111,SC1112,SC2143,SC2145,SC2086,SC2089,SC2090
-set -xe
+
 ####################################################################################################
 #
 # Setup Your Mac via swiftDialog
@@ -34,7 +34,7 @@ set -xe
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-2"
+scriptVersion="1.13.0-3"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -111,7 +111,7 @@ supportKB=""
 supportTeamErrorKB=""
 
 # Disable the "Continue" button in the User Input "Welcome" dialog until Dynamic Download Estimates have complete [ true | false ] (thanks, @Eltord!)
-lockContinueBeforeEstimations="false"
+lockContinueBeforeEstimations="true"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Operating System, Computer Model Name, etc.
@@ -899,6 +899,23 @@ function runAsUser() {
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Calculate Free Disk Space
+# Disk Usage with swiftDialog (https://snelson.us/2022/11/disk-usage-with-swiftdialog-0-0-2/)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+function calculateFreeDiskSpace() {
+
+	freeSpace=$(diskutil info / | grep -E 'Free Space|Available Space|Container Free Space' | awk -F ":\s*" '{ print $2 }' | awk -F "(" '{ print $1 }' | xargs)
+	freeBytes=$(diskutil info / | grep -E 'Free Space|Available Space|Container Free Space' | awk -F "(\\\(| Bytes\\\))" '{ print $2 }')
+	diskBytes=$(diskutil info / | grep -E 'Total Space' | awk -F "(\\\(| Bytes\\\))" '{ print $2 }')
+	freePercentage=$(echo "scale=2; ( $freeBytes * 100 ) / $diskBytes" | bc)
+	diskSpace="$freeSpace free (${freePercentage}% available)"
+
+	updateScriptLog "${1}: Disk Space: ${diskSpace}"
+
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Update the "Welcome" dialog
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -932,6 +949,13 @@ function dialogUpdateFailure() {
 function finalise() {
 
 	outputLineNumberInVerboseDebugMode
+
+	if [[ "${configurationDownloadEstimation}" == "true" ]]; then
+
+		outputLineNumberInVerboseDebugMode
+		calculateFreeDiskSpace "FINALISE USER EXPERIENCE"
+
+	fi
 
 	if [[ "${jamfProPolicyTriggerFailure}" == "failed" ]]; then
 
@@ -1021,6 +1045,11 @@ function finalise() {
 
 		outputLineNumberInVerboseDebugMode
 		updateScriptLog "All polcies executed successfully"
+		if [[ -n "${webhookURL}" ]]; then
+			webhookStatus="Successful"
+			updateScriptLog "Sending success webhook message"
+			webHookMessage
+		fi
 
 		if [[ "${brandingBannerDisplayText}" == "true" ]]; then dialogUpdateSetupYourMac "title:Ready, set, done!"; fi
 		dialogUpdateSetupYourMac "icon: SF=checkmark.circle.fill,weight=bold,colour1=#00ff44,colour2=#075c1e"
@@ -1197,8 +1226,33 @@ function validatePolicyResult() {
 
 	"Local")
 		case ${trigger} in
-		somecheck)
-			:
+		rosetta)
+			updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 … " # Thanks, @smithjw!
+			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
+			arch=$(/usr/bin/arch)
+			if [[ "${arch}" == "arm64" ]]; then
+				# Mac with Apple silicon; check for Rosetta
+				rosettaTest=$(
+					arch -x86_64 /usr/bin/true 2>/dev/null
+					echo $?
+				)
+				if [[ "${rosettaTest}" -eq 0 ]]; then
+					# Installed
+					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 is installed"
+					dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Running"
+				else
+					# Not Installed
+					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 is NOT installed"
+					dialogUpdateSetupYourMac "listitem: index: $i, status: fail, statustext: Failed"
+					jamfProPolicyTriggerFailure="failed"
+					exitCode="1"
+					jamfProPolicyNameFailures+="• $listitem  \n"
+				fi
+			else
+				# Ineligible
+				updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 is not applicable"
+				dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Ineligible"
+			fi
 			;;
 		*)
 			updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Local Validation “${validation}” Missing"
@@ -1438,7 +1492,7 @@ function welcomeDialogInfoboxAnimation() {
 	while true; do
 		for emoji in "${clock_emojis[@]}"; do
 			if kill -0 "$callingPID" 2>/dev/null; then
-				dialogUpdateWelcome "infobox: Testing Connection $emoji"
+				dialogUpdateWelcome "infobox: Waiting For Network $emoji"
 			else
 				break
 			fi
@@ -1459,13 +1513,48 @@ function setupYourMacDialogInfoboxAnimation() {
 	while true; do
 		for emoji in "${clock_emojis[@]}"; do
 			if kill -0 "$callingPID" 2>/dev/null; then
-				dialogUpdateSetupYourMac "infobox: Testing Connection $emoji"
+				dialogUpdateSetupYourMac "infobox: Waiting For Network $emoji"
 			else
 				break
 			fi
 			sleep 0.6
 		done
 	done
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Check Network Quality for Configurations (thanks, @bartreadon!)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+function checkNetworkConnectivity() {
+	myPID="$$"
+	updateScriptLog "WELCOME DIALOG: Display Welcome dialog 'infobox' animation …"
+	welcomeDialogInfoboxAnimation "$myPID" &
+	welcomeDialogInfoboxAnimationPID="$!"
+
+	while true; do
+		if curl -s --connect-timeout 5 https://wdm.jamfcloud.com >/dev/null; then
+			updateScriptLog "WELCOME DIALOG: Successfully connected to wdm.jamfcloud.com"
+			break
+		else
+			updateScriptLog "WELCOME DIALOG: Retrying connection to wdm.jamfcloud.com"
+			sleep 5
+		fi
+	done
+
+	kill ${welcomeDialogInfoboxAnimationPID}
+	outputLineNumberInVerboseDebugMode
+
+	updateScriptLog "WELCOME DIALOG: Completed wdm.jamfcloud.com connectivity check …"
+
+	# Update the dialog to reflect the connectivity check
+	dialogUpdateWelcome "infobox: **Connected**"
+
+	# If option to lock the continue button is set to true, enable the continue button now to let the user progress
+	if [[ "${lockContinueBeforeEstimations}" == "true" ]]; then
+		updateScriptLog "WELCOME DIALOG: Enabling Continue Button"
+		dialogUpdateWelcome "button1: enable"
+	fi
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -1575,10 +1664,43 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 	outputLineNumberInVerboseDebugMode
 
-	# Write Welcome JSON to disk
-	welcomeJSON=${welcomeJSON//Analyzing …/}
-	echo "$welcomeJSON" >"$welcomeJSONFile"
-	welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json")
+	# Estimate Configuration Download Times
+	if [[ "${configurationDownloadEstimation}" == "true" ]]; then
+
+		outputLineNumberInVerboseDebugMode
+
+		calculateFreeDiskSpace "WELCOME DIALOG"
+
+		updateScriptLog "WELCOME DIALOG: Starting checkNetworkConnectivity …"
+		checkNetworkConnectivity &
+
+		updateScriptLog "WELCOME DIALOG: Write 'welcomeJSON' to $welcomeJSONFile …"
+		echo "$welcomeJSON" >"$welcomeJSONFile"
+
+		# If option to lock the continue button is set to true, open welcome dialog with button 1 disabled
+		if [[ "${lockContinueBeforeEstimations}" == "true" ]]; then
+
+			updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog with disabled Continue Button …"
+			welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json --button1disabled")
+
+		else
+
+			updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog …"
+			welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json")
+
+		fi
+
+	else
+
+		# Display Welcome dialog, sans estimation of Configuration download times
+		updateScriptLog "WELCOME DIALOG: Skipping estimation of Configuration download times"
+
+		# Write Welcome JSON to disk
+		welcomeJSON=${welcomeJSON//Analyzing …/}
+		echo "$welcomeJSON" >"$welcomeJSONFile"
+		welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json")
+
+	fi
 
 	# Evaluate User Input
 	if [[ -z "${welcomeResults}" ]]; then
