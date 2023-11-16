@@ -45,13 +45,13 @@
       ]
     },
     {
-      "listitem": "Install NoMAD Login",
-      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/nomadlogin.png",
+      "listitem": "Install XCreds",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/xcreds.png",
       "progresstext": "Installing NoMAD Login",
       "trigger_list": [
         {
-          "trigger": "dep_nomad_login",
-          "validation": "None"
+          "trigger": "xcreds",
+          "validation": "/Applications/XCreds.app/Contents/Info.plist"
         }
       ]
     },
@@ -96,17 +96,6 @@
         {
           "trigger": "39",
           "validation": "/Applications/Google Chrome.app/Contents/Info.plist"
-        }
-      ]
-    },
-    {
-      "listitem": "NoMAD",
-      "icon": "https://apse2.ics.services.jamfcloud.com/icon/hash_71ec3f800d6af2709862df3c6db0b526380ecc8d95f7bf7a316723b64ed7e13f",
-      "progresstext": "Installing NoMAD",
-      "trigger_list": [
-        {
-          "trigger": "84",
-          "validation": "/Applications/NoMAD.app/Contents/Info.plist"
         }
       ]
     },

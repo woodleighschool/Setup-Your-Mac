@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-3"
+scriptVersion="1.13.0-4"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -252,8 +252,8 @@ else
 		else
 			updateScriptLog "PRE-FLIGHT CHECK: The installed operating system, macOS ${osVersion} (${osBuild}), needs to be updated to Build ${requiredMinimumBuild}; exiting with error."
 			osascript -e 'display dialog "Please advise your Support Representative of the following error:\r\rExpected macOS Build '${requiredMinimumBuild}' (or newer), but found macOS '${osVersion}' ('${osBuild}').\r\r" with title "Setup Your Mac: Detected Outdated Operating System" buttons {"Open Software Update"} with icon caution'
-			updateScriptLog "PRE-FLIGHT CHECK: Executing /usr/bin/open '${outdatedOsAction}' …"
-			su - "${loggedInUser}" -c "/usr/bin/open \"${outdatedOsAction}\""
+			updateScriptLog "PRE-FLIGHT CHECK: Executing open '${outdatedOsAction}' …"
+			su - "${loggedInUser}" -c "open \"${outdatedOsAction}\""
 			exit 1
 
 		fi
@@ -263,8 +263,8 @@ else
 
 		updateScriptLog "PRE-FLIGHT CHECK: swiftDialog requires at least macOS 12 Monterey and this Mac is running ${osVersion} (${osBuild}), exiting with error."
 		osascript -e 'display dialog "Please advise your Support Representative of the following error:\r\rExpected macOS Build '${requiredMinimumBuild}' (or newer), but found macOS '${osVersion}' ('${osBuild}').\r\r" with title "Setup Your Mac: Detected Outdated Operating System" buttons {"Open Software Update"} with icon caution'
-		updateScriptLog "PRE-FLIGHT CHECK: Executing /usr/bin/open '${outdatedOsAction}' …"
-		su - "${loggedInUser}" -c "/usr/bin/open \"${outdatedOsAction}\""
+		updateScriptLog "PRE-FLIGHT CHECK: Executing open '${outdatedOsAction}' …"
+		su - "${loggedInUser}" -c "open \"${outdatedOsAction}\""
 		exit 1
 
 	fi
@@ -333,84 +333,6 @@ function toggleJamfLaunchDaemon() {
 }
 
 toggleJamfLaunchDaemon
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Pre-flight Check: Validate / install swiftDialog (Thanks big bunches, @acodega!)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-function dialogInstall() {
-
-	# Get the URL of the latest PKG From the Dialog GitHub repo
-	dialogURL=$(curl -L --silent --fail "https://api.github.com/repos/swiftDialog/swiftDialog/releases/latest" | awk -F '"' "/browser_download_url/ && /pkg\"/ { print \$4; exit }")
-
-	# Expected Team ID of the downloaded PKG
-	expectedDialogTeamID="PWA5E9TQ59"
-
-	updateScriptLog "PRE-FLIGHT CHECK: Installing swiftDialog..."
-
-	# Create temporary working directory
-	workDirectory=$(/usr/bin/basename "$0")
-	tempDirectory=$(/usr/bin/mktemp -d "/private/tmp/$workDirectory.XXXXXX")
-
-	# Download the installer package
-	/usr/bin/curl --location --silent "$dialogURL" -o "$tempDirectory/Dialog.pkg"
-
-	# Verify the download
-	teamID=$(/usr/sbin/spctl -a -vv -t install "$tempDirectory/Dialog.pkg" 2>&1 | awk '/origin=/ {print $NF }' | tr -d '()')
-
-	# Install the package if Team ID validates
-	if [[ "$expectedDialogTeamID" == "$teamID" ]]; then
-
-		/usr/sbin/installer -pkg "$tempDirectory/Dialog.pkg" -target /
-		sleep 2
-		dialogVersion=$(/usr/local/bin/dialog --version)
-		updateScriptLog "PRE-FLIGHT CHECK: swiftDialog version ${dialogVersion} installed; proceeding..."
-
-	else
-
-		# Display a so-called "simple" dialog if Team ID fails to validate
-		osascript -e 'display dialog "Please advise your Support Representative of the following error:\r\r• Dialog Team ID verification failed\r\r" with title "Setup Your Mac: Error" buttons {"Close"} with icon caution'
-		completionActionOption="Quit"
-		exitCode="1"
-		quitScript
-
-	fi
-
-	# Remove the temporary working directory when done
-	/bin/rm -Rf "$tempDirectory"
-
-}
-
-function dialogCheck() {
-
-	# Output Line Number in `verbose` Debug Mode
-	if [[ "${debugMode}" == "verbose" ]]; then updateScriptLog "PRE-FLIGHT CHECK: # # # SETUP YOUR MAC VERBOSE DEBUG MODE: Line No. ${LINENO} # # #"; fi
-
-	# Check for Dialog and install if not found
-	if [ ! -e "/Library/Application Support/Dialog/Dialog.app" ]; then
-
-		updateScriptLog "PRE-FLIGHT CHECK: swiftDialog not found. Installing..."
-		dialogInstall
-
-	else
-
-		dialogVersion=$(/usr/local/bin/dialog --version)
-		if [[ "${dialogVersion}" < "${swiftDialogMinimumRequiredVersion}" ]]; then
-
-			updateScriptLog "PRE-FLIGHT CHECK: swiftDialog version ${dialogVersion} found but swiftDialog ${swiftDialogMinimumRequiredVersion} or newer is required; updating..."
-			dialogInstall
-
-		else
-
-			updateScriptLog "PRE-FLIGHT CHECK: swiftDialog version ${dialogVersion} found; proceeding..."
-
-		fi
-
-	fi
-
-}
-
-dialogCheck
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Pre-flight Check: Validate `supportTeam` variables are populated
@@ -515,7 +437,7 @@ if [[ $welcomeBannerImage == *"http"* ]]; then
 fi
 
 # Welcome icon set to either light or dark, based on user's Apperance setting (thanks, @mm2270!)
-appleInterfaceStyle=$(/usr/bin/defaults read /Users/"${loggedInUser}"/Library/Preferences/.GlobalPreferences.plist AppleInterfaceStyle 2>&1)
+appleInterfaceStyle=$(defaults read /Users/"${loggedInUser}"/Library/Preferences/.GlobalPreferences.plist AppleInterfaceStyle 2>&1)
 if [[ "${appleInterfaceStyle}" == "Dark" ]]; then
 	if [[ -n "$brandingIconDark" ]]; then
 		welcomeIcon="$brandingIconDark"
@@ -532,10 +454,10 @@ fi
 
 # prepopulate from UserInfo.plist (for re-runs)
 if [ -f /Users/Shared/UserInfo.plist ]; then
-	plistAssetTag=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Asset Tag" 2>/dev/null)
-	plistCampus=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Campus" 2>/dev/null)
-	plistPosition=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Position" 2>/dev/null)
-	plistUsername=$(/usr/bin/defaults read /Users/Shared/UserInfo.plist "Username" 2>/dev/null)
+	plistAssetTag=$(defaults read /Users/Shared/UserInfo.plist "Asset Tag" 2>/dev/null)
+	plistCampus=$(defaults read /Users/Shared/UserInfo.plist "Campus" 2>/dev/null)
+	plistPosition=$(defaults read /Users/Shared/UserInfo.plist "Position" 2>/dev/null)
+	plistUsername=$(defaults read /Users/Shared/UserInfo.plist "Username" 2>/dev/null)
 fi
 if [ -n "$plistAssetTag" ]; then
 	assetTagPrefil='"value" : "'${plistAssetTag}'",'
@@ -624,7 +546,7 @@ welcomeJSON='
     "selectitems" : [
         '${selectItemsJSON}'
     ],
-    "height" : "450"
+    "height" : "500"
 }
 '
 
@@ -769,14 +691,9 @@ function policyJSONConfiguration() {
 		policyJSON="$(curl -sL $jsonURL/staff.json)"
 		;;
 
-	"Students")
-		# Fetch JSON data for Students configuration
-		policyJSON="$(curl -sL $jsonURL/student.json)"
-		;;
-
 	*) # Catch-all
 		# Fetch default JSON data
-		policyJSON="$(curl -sL $jsonURL/default.json)"
+		policyJSON="$(curl -sL $jsonURL/student.json)"
 		;;
 
 	esac
@@ -950,12 +867,8 @@ function finalise() {
 
 	outputLineNumberInVerboseDebugMode
 
-	if [[ "${configurationDownloadEstimation}" == "true" ]]; then
-
-		outputLineNumberInVerboseDebugMode
-		calculateFreeDiskSpace "FINALISE USER EXPERIENCE"
-
-	fi
+	outputLineNumberInVerboseDebugMode
+	calculateFreeDiskSpace "FINALISE USER EXPERIENCE"
 
 	if [[ "${jamfProPolicyTriggerFailure}" == "failed" ]]; then
 
@@ -1229,11 +1142,11 @@ function validatePolicyResult() {
 		rosetta)
 			updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 … " # Thanks, @smithjw!
 			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
-			arch=$(/usr/bin/arch)
+			arch=$(arch)
 			if [[ "${arch}" == "arm64" ]]; then
 				# Mac with Apple silicon; check for Rosetta
 				rosettaTest=$(
-					arch -x86_64 /usr/bin/true 2>/dev/null
+					arch -x86_64 true 2>/dev/null
 					echo $?
 				)
 				if [[ "${rosettaTest}" -eq 0 ]]; then
@@ -1252,6 +1165,38 @@ function validatePolicyResult() {
 				# Ineligible
 				updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 is not applicable"
 				dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Ineligible"
+			fi
+			;;
+		filevault)
+			updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Validate FileVault … "
+			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
+			updateScriptLog "SETUP YOUR MAC DIALOG: Validate Policy Result: Pausing for 5 seconds for FileVault … "
+			sleep 5 # Arbitrary value; tuning needed
+			fileVaultCheck=$(fdesetup isactive)
+			if [[ -f /Library/Preferences/com.apple.fdesetup.plist ]] || [[ "$fileVaultCheck" == "true" ]]; then
+				fileVaultStatus=$(fdesetup status -extended -verbose 2>&1)
+				case ${fileVaultStatus} in
+				*"FileVault is On."*)
+					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: FileVault: FileVault is On."
+					dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Enabled"
+					;;
+				*"Deferred enablement appears to be active for user"*)
+					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: FileVault: Enabled"
+					dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Enabled (next login)"
+					;;
+				*)
+					dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Unknown"
+					jamfProPolicyTriggerFailure="failed"
+					exitCode="1"
+					jamfProPolicyNameFailures+="• $listitem  \n"
+					;;
+				esac
+			else
+				updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: '/Library/Preferences/com.apple.fdesetup.plist' NOT Found"
+				dialogUpdateSetupYourMac "listitem: index: $i, status: fail, statustext: Failed"
+				jamfProPolicyTriggerFailure="failed"
+				exitCode="1"
+				jamfProPolicyNameFailures+="• $listitem  \n"
 			fi
 			;;
 		*)
@@ -1664,40 +1609,23 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 	outputLineNumberInVerboseDebugMode
 
-	# Estimate Configuration Download Times
-	if [[ "${configurationDownloadEstimation}" == "true" ]]; then
+	calculateFreeDiskSpace "WELCOME DIALOG"
 
-		outputLineNumberInVerboseDebugMode
+	updateScriptLog "WELCOME DIALOG: Starting checkNetworkConnectivity …"
+	checkNetworkConnectivity &
 
-		calculateFreeDiskSpace "WELCOME DIALOG"
+	updateScriptLog "WELCOME DIALOG: Write 'welcomeJSON' to $welcomeJSONFile …"
+	echo "$welcomeJSON" >"$welcomeJSONFile"
 
-		updateScriptLog "WELCOME DIALOG: Starting checkNetworkConnectivity …"
-		checkNetworkConnectivity &
+	# If option to lock the continue button is set to true, open welcome dialog with button 1 disabled
+	if [[ "${lockContinueBeforeEstimations}" == "true" ]]; then
 
-		updateScriptLog "WELCOME DIALOG: Write 'welcomeJSON' to $welcomeJSONFile …"
-		echo "$welcomeJSON" >"$welcomeJSONFile"
-
-		# If option to lock the continue button is set to true, open welcome dialog with button 1 disabled
-		if [[ "${lockContinueBeforeEstimations}" == "true" ]]; then
-
-			updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog with disabled Continue Button …"
-			welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json --button1disabled")
-
-		else
-
-			updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog …"
-			welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json")
-
-		fi
+		updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog with disabled Continue Button …"
+		welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json --button1disabled")
 
 	else
 
-		# Display Welcome dialog, sans estimation of Configuration download times
-		updateScriptLog "WELCOME DIALOG: Skipping estimation of Configuration download times"
-
-		# Write Welcome JSON to disk
-		welcomeJSON=${welcomeJSON//Analyzing …/}
-		echo "$welcomeJSON" >"$welcomeJSONFile"
+		updateScriptLog "WELCOME DIALOG: Display 'Welcome' dialog …"
 		welcomeResults=$(eval "${dialogBinary} --jsonfile ${welcomeJSONFile} --json")
 
 	fi
@@ -1838,8 +1766,8 @@ EOF
 		fi
 
 		# Asset Tag
-		if [[ "${department}" == "Staff" ]]; then
-			reconOptions+="-department \"${department}\" "
+		if [[ "${position}" == "Staff" ]]; then
+			reconOptions+="-department \"${position}\" "
 		fi
 
 		# Output `recon` options to log
