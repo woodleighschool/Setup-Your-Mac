@@ -629,7 +629,7 @@ dialogSetupYourMacCMD="$dialogBinary \
 --infotext \"$scriptVersion\" \
 --titlefont 'shadow=true, size=36, colour=#FFFDF4' \
 --messagefont 'size=14' \
---height '450' \
+--height '500' \
 --position 'centre' \
 --blurscreen \
 --ontop \
@@ -1165,38 +1165,6 @@ function validatePolicyResult() {
 				# Ineligible
 				updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Rosetta 2 is not applicable"
 				dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Ineligible"
-			fi
-			;;
-		filevault)
-			updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: Validate FileVault … "
-			dialogUpdateSetupYourMac "listitem: index: $i, status: wait, statustext: Checking …"
-			updateScriptLog "SETUP YOUR MAC DIALOG: Validate Policy Result: Pausing for 5 seconds for FileVault … "
-			sleep 5 # Arbitrary value; tuning needed
-			fileVaultCheck=$(fdesetup isactive)
-			if [[ -f /Library/Preferences/com.apple.fdesetup.plist ]] || [[ "$fileVaultCheck" == "true" ]]; then
-				fileVaultStatus=$(fdesetup status -extended -verbose 2>&1)
-				case ${fileVaultStatus} in
-				*"FileVault is On."*)
-					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: FileVault: FileVault is On."
-					dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Enabled"
-					;;
-				*"Deferred enablement appears to be active for user"*)
-					updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: FileVault: Enabled"
-					dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Enabled (next login)"
-					;;
-				*)
-					dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Unknown"
-					jamfProPolicyTriggerFailure="failed"
-					exitCode="1"
-					jamfProPolicyNameFailures+="• $listitem  \n"
-					;;
-				esac
-			else
-				updateScriptLog "SETUP YOUR MAC DIALOG: Locally Validate Policy Result: '/Library/Preferences/com.apple.fdesetup.plist' NOT Found"
-				dialogUpdateSetupYourMac "listitem: index: $i, status: fail, statustext: Failed"
-				jamfProPolicyTriggerFailure="failed"
-				exitCode="1"
-				jamfProPolicyNameFailures+="• $listitem  \n"
 			fi
 			;;
 		*)

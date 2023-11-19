@@ -1,17 +1,6 @@
 {
   "steps": [
     {
-      "listitem": "Setup Token Admin",
-      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
-      "progresstext": "Updating Token Admin Password and Generating Bootstrap Token",
-      "trigger_list": [
-        {
-          "trigger": "dep_setup_tokenadmin",
-          "validation": "None"
-        }
-      ]
-    },
-    {
       "listitem": "Setup Student Woodmin",
       "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
       "progresstext": "Creating the Woodleigh Admin Account",
@@ -23,13 +12,24 @@
       ]
     },
     {
+      "listitem": "Setup Token Admin",
+      "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/branding.png",
+      "progresstext": "Updating Token Admin Password and Generating Bootstrap Token",
+      "trigger_list": [
+        {
+          "trigger": "dep_setup_tokenadmin",
+          "validation": "None"
+        }
+      ]
+    },
+    {
       "listitem": "Install Rosetta",
       "icon": "https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Icons/rosetta.png",
       "progresstext": "Installing Rosetta",
       "trigger_list": [
         {
           "trigger": "dep_install_rosetta",
-          "validation": "None"
+          "validation": "rosetta"
         }
       ]
     },
@@ -89,12 +89,12 @@
       ]
     },
     {
-      "listitem": "Microsoft Office",
+      "listitem": "Microsoft 365 Suite",
       "icon": "https://apse2.ics.services.jamfcloud.com/icon/hash_fa75594cebc258ca989aba50b38d5953dfcbac9105ec0c51e49644ceccea4eea",
-      "progresstext": "Installing Microsoft365",
+      "progresstext": "Installing Microsoft 365 Suite",
       "trigger_list": [
         {
-          "trigger": "40",
+          "trigger": "microsoft_365_suite",
           "validation": "/Applications/Microsoft Word.app/Contents/Info.plist"
         }
       ]
@@ -105,7 +105,7 @@
       "progresstext": "Installing Chrome",
       "trigger_list": [
         {
-          "trigger": "39",
+          "trigger": "google_chrome",
           "validation": "/Applications/Google Chrome.app/Contents/Info.plist"
         }
       ]
@@ -116,7 +116,7 @@
       "progresstext": "Installing Vivi",
       "trigger_list": [
         {
-          "trigger": "185",
+          "trigger": "vivi",
           "validation": "/Applications/Vivi.app/Contents/Info.plist"
         }
       ]
