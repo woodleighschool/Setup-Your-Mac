@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-5"
+scriptVersion="1.13.0-6"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -98,8 +98,8 @@ positionList=$(echo "${positionListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e
 # [SYM-Helper] Branding overrides
 brandingBanner="" # Image by pikisuperstar on Freepik
 brandingBannerDisplayText="false"
-brandingIconLight="/tmp/SetupYourMac/Icons/Icon.png"
-brandingIconDark="/tmp/SetupYourMac/Icons/Icon.png"
+brandingIconLight="/tmp/SetupYourMac/Icons/Logo.png"
+brandingIconDark="/tmp/SetupYourMac/Icons/Logo.png"
 
 # [SYM-Helper] IT Support Variables - Use these if the default text is fine but you want your org's info inserted instead
 supportTeamName="Woodleigh HelpDesk"
