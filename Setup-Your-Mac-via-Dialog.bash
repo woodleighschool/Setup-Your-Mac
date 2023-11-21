@@ -98,8 +98,8 @@ positionList=$(echo "${positionListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e
 # [SYM-Helper] Branding overrides
 brandingBanner="" # Image by pikisuperstar on Freepik
 brandingBannerDisplayText="false"
-brandingIconLight="file:///tmp/SetupYourMac/Icons/Icon.png"
-brandingIconDark="file:///tmp/SetupYourMac/Icons/Icon.png"
+brandingIconLight="/tmp/SetupYourMac/Icons/Icon.png"
+brandingIconDark="/tmp/SetupYourMac/Icons/Icon.png"
 
 # [SYM-Helper] IT Support Variables - Use these if the default text is fine but you want your org's info inserted instead
 supportTeamName="Woodleigh HelpDesk"
@@ -677,23 +677,18 @@ dialogSetupYourMacCMD="$dialogBinary \
 
 function policyJSONConfiguration() {
 
-	outputLineNumberInVerboseDebugMode
-
 	updateScriptLog "WELCOME DIALOG: PolicyJSON Configuration: $symConfiguration"
-
-	# Define the URL to fetch the JSON data
-	jsonURL="https://raw.githubusercontent.com/woodleighschool/Setup-Your-Mac/main/Templates/"
 
 	case ${symConfiguration} in
 
 	"Staff")
 		# Fetch JSON data for Staff configuration
-		policyJSON="$(curl -sL $jsonURL/staff.json)"
+		policyJSON="$(cat /tmp/SetupYourMac/Templates/staff.json)"
 		;;
 
 	*) # Catch-all
 		# Fetch default JSON data
-		policyJSON="$(curl -sL $jsonURL/student.json)"
+		policyJSON="$(cat /tmp/SetupYourMac/Templates/student.json)"
 		;;
 
 	esac
@@ -797,14 +792,6 @@ esac
 ####################################################################################################
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Output Line Number in `verbose` Debug Mode (thanks, @bartreardon!)
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-function outputLineNumberInVerboseDebugMode() {
-	if [[ "${debugMode}" == "verbose" ]]; then updateScriptLog "# # # SETUP YOUR MAC VERBOSE DEBUG MODE: Line No. ${BASH_LINENO[0]} # # #"; fi
-}
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Run command as logged-in user (thanks, @scriptingosx!)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -865,19 +852,14 @@ function dialogUpdateFailure() {
 
 function finalise() {
 
-	outputLineNumberInVerboseDebugMode
-
-	outputLineNumberInVerboseDebugMode
 	calculateFreeDiskSpace "FINALISE USER EXPERIENCE"
 
 	if [[ "${jamfProPolicyTriggerFailure}" == "failed" ]]; then
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "Failed polcies detected …"
 
 		if [[ "${failureDialog}" == "true" ]]; then
 
-			outputLineNumberInVerboseDebugMode
 			updateScriptLog "Display Failure dialog: ${failureDialog}"
 
 			killProcess "caffeinate"
@@ -938,7 +920,6 @@ function finalise() {
 
 		else
 
-			outputLineNumberInVerboseDebugMode
 			updateScriptLog "Display Failure dialog: ${failureDialog}"
 
 			killProcess "caffeinate"
@@ -956,7 +937,6 @@ function finalise() {
 
 	else
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "All polcies executed successfully"
 		if [[ -n "${webhookURL}" ]]; then
 			webhookStatus="Successful"
@@ -1008,8 +988,6 @@ function get_json_value_welcomeDialog() {
 
 function run_jamf_trigger() {
 
-	outputLineNumberInVerboseDebugMode
-
 	trigger="$1"
 
 	if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
@@ -1033,8 +1011,6 @@ function run_jamf_trigger() {
 
 function confirmPolicyExecution() {
 
-	outputLineNumberInVerboseDebugMode
-
 	trigger="${1}"
 	validation="${2}"
 	updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: '${trigger}' '${validation}'"
@@ -1044,7 +1020,6 @@ function confirmPolicyExecution() {
 
 	*/*) # If the validation variable contains a forward slash (i.e., "/"), presume it's a path and check if that path exists on disk
 
-		outputLineNumberInVerboseDebugMode
 		if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 			updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: DEBUG MODE: Skipping 'run_jamf_trigger ${trigger}'"
 			sleep "${debugModeSleepAmount}"
@@ -1060,7 +1035,6 @@ function confirmPolicyExecution() {
 
 	"None" | "none")
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: ${validation}"
 		if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 			sleep "${debugModeSleepAmount}"
@@ -1071,7 +1045,6 @@ function confirmPolicyExecution() {
 
 	"Recon" | "recon")
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: ${validation}"
 		if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 			updateScriptLog "SETUP YOUR MAC DIALOG: DEBUG MODE: Set 'debugMode' to false to update computer inventory with the following 'reconOptions': \"${reconOptions}\" …"
@@ -1086,7 +1059,6 @@ function confirmPolicyExecution() {
 
 	*)
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution Catch-all: ${validation}"
 		if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 			sleep "${debugModeSleepAmount}"
@@ -1104,8 +1076,6 @@ function confirmPolicyExecution() {
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function validatePolicyResult() {
-
-	outputLineNumberInVerboseDebugMode
 
 	trigger="${1}"
 	validation="${2}"
@@ -1212,7 +1182,6 @@ function validatePolicyResult() {
 
 	"None" | "none")
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: ${validation}"
 		dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Installed"
 		;;
@@ -1224,7 +1193,6 @@ function validatePolicyResult() {
 
 	"Recon" | "recon")
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Confirm Policy Execution: ${validation}"
 		dialogUpdateSetupYourMac "listitem: index: $i, status: success, statustext: Updated"
 		;;
@@ -1235,7 +1203,6 @@ function validatePolicyResult() {
 
 	*)
 
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "SETUP YOUR MAC DIALOG: Validate Policy Results Catch-all: ${validation}"
 		dialogUpdateSetupYourMac "listitem: index: $i, status: error, statustext: Error"
 		;;
@@ -1267,8 +1234,6 @@ function killProcess() {
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function completionAction() {
-
-	outputLineNumberInVerboseDebugMode
 
 	if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 
@@ -1456,7 +1421,6 @@ function checkNetworkConnectivity() {
 	done
 
 	kill ${welcomeDialogInfoboxAnimationPID}
-	outputLineNumberInVerboseDebugMode
 
 	updateScriptLog "WELCOME DIALOG: Completed wdm.jamfcloud.com connectivity check …"
 
@@ -1475,8 +1439,6 @@ function checkNetworkConnectivity() {
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function quitScript() {
-
-	outputLineNumberInVerboseDebugMode
 
 	updateScriptLog "QUIT SCRIPT: Exiting …"
 
@@ -1574,8 +1536,6 @@ fi
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 if [[ "${welcomeDialog}" == "userInput" ]]; then
-
-	outputLineNumberInVerboseDebugMode
 
 	calculateFreeDiskSpace "WELCOME DIALOG"
 
@@ -1748,7 +1708,6 @@ EOF
 		eval "${dialogSetupYourMacCMD[*]}" &
 		sleep 0.3
 		until pgrep -q -x "Dialog"; do
-			outputLineNumberInVerboseDebugMode
 			updateScriptLog "WELCOME DIALOG: Waiting to display 'Setup Your Mac' dialog; pausing"
 			sleep 0.5
 		done
@@ -1789,7 +1748,6 @@ else
 	# Select "Catch-all" policyJSON
 	###
 
-	outputLineNumberInVerboseDebugMode
 	if [[ -n "$presetConfiguration" ]]; then
 		symConfiguration="${presetConfiguration}"
 	else
@@ -1805,7 +1763,6 @@ else
 	eval "${dialogSetupYourMacCMD[*]}" &
 	sleep 0.3
 	until pgrep -q -x "Dialog"; do
-		outputLineNumberInVerboseDebugMode
 		updateScriptLog "WELCOME DIALOG: Waiting to display 'Setup Your Mac' dialog; pausing"
 		sleep 0.5
 	done
@@ -1821,8 +1778,6 @@ fi
 # Iterate through policyJSON to construct the list for swiftDialog
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-outputLineNumberInVerboseDebugMode
-
 dialog_step_length=$(get_json_value "${policyJSON}" "steps.length")
 for ((i = 0; i < dialog_step_length; i++)); do
 	listitem=$(get_json_value "${policyJSON}" "steps[$i].listitem")
@@ -1835,8 +1790,6 @@ done
 # Determine the "progress: increment" value based on the number of steps in policyJSON
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-outputLineNumberInVerboseDebugMode
-
 totalProgressSteps=$(get_json_value "${policyJSON}" "steps.length")
 progressIncrementValue=$((100 / totalProgressSteps))
 updateScriptLog "SETUP YOUR MAC DIALOG: Total Number of Steps: ${totalProgressSteps}"
@@ -1846,8 +1799,6 @@ updateScriptLog "SETUP YOUR MAC DIALOG: Progress Increment Value: ${progressIncr
 # The ${array_name[*]/%/,} expansion will combine all items within the array adding a "," character at the end
 # To add a character to the start, use "/#/" instead of the "/%/"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-outputLineNumberInVerboseDebugMode
 
 list_item_string=${list_item_array[*]/%/,}
 dialogUpdateSetupYourMac "list: ${list_item_string%?}"
@@ -1860,8 +1811,6 @@ dialogUpdateSetupYourMac "list: show"
 # Set initial progress bar
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-outputLineNumberInVerboseDebugMode
-
 updateScriptLog "SETUP YOUR MAC DIALOG: Initial progress bar"
 dialogUpdateSetupYourMac "progress: 1"
 
@@ -1869,15 +1818,11 @@ dialogUpdateSetupYourMac "progress: 1"
 # Close Welcome dialog
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-outputLineNumberInVerboseDebugMode
-
 dialogUpdateWelcome "quit:"
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Update Setup Your Mac's infobox
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-outputLineNumberInVerboseDebugMode
 
 infobox=""
 
@@ -1895,8 +1840,6 @@ dialogUpdateSetupYourMac "infobox: ${infobox}"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Update Setup Your Mac's helpmessage
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-outputLineNumberInVerboseDebugMode
 
 if [[ "${symConfiguration}" != *"Catch-all"* ]]; then
 
@@ -1947,8 +1890,6 @@ dialogUpdateSetupYourMac "helpmessage: ${helpmessage}"
 
 for ((i = 0; i < dialog_step_length; i++)); do
 
-	outputLineNumberInVerboseDebugMode
-
 	# Initialize SECONDS
 	SECONDS="0"
 
@@ -1998,7 +1939,5 @@ done
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Complete processing and enable the "Done" button
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-outputLineNumberInVerboseDebugMode
 
 finalise
