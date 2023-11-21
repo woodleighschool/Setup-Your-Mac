@@ -98,8 +98,8 @@ positionList=$(echo "${positionListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e
 # [SYM-Helper] Branding overrides
 brandingBanner="" # Image by pikisuperstar on Freepik
 brandingBannerDisplayText="false"
-brandingIconLight="https://avatars.githubusercontent.com/u/112675474"
-brandingIconDark="https://avatars.githubusercontent.com/u/112675474"
+brandingIconLight="file:///tmp/SetupYourMac/Icons/Icon.png"
+brandingIconDark="file:///tmp/SetupYourMac/Icons/Icon.png"
 
 # [SYM-Helper] IT Support Variables - Use these if the default text is fine but you want your org's info inserted instead
 supportTeamName="Woodleigh HelpDesk"
