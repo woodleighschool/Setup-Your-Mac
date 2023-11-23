@@ -83,7 +83,7 @@
       "progresstext": "Locking Down Sudo to Authorised Users",
       "trigger_list": [
         {
-          "trigger": "sudolock",
+          "trigger": "outset_sudolock",
           "validation": "None"
         }
       ]
