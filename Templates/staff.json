@@ -23,6 +23,17 @@
       ]
     },
     {
+      "listitem": "Update Users",
+      "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
+      "progresstext": "Updating Inventory",
+      "trigger_list": [
+        {
+          "trigger": "recon",
+          "validation": "recon"
+        }
+      ]
+    },
+    {
       "listitem": "Install Rosetta",
       "icon": "/tmp/SetupYourMac/Icons/Rosetta.png",
       "progresstext": "Installing Rosetta",
@@ -40,6 +51,17 @@
       "trigger_list": [
         {
           "trigger": "dep_branding_tools",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Install Printers",
+      "icon": "/tmp/SetupYourMac/Icons/Printer.png",
+      "progresstext": "Adding Printers",
+      "trigger_list": [
+        {
+          "trigger": "printers",
           "validation": "None"
         }
       ]
