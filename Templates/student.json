@@ -23,7 +23,7 @@
       ]
     },
     {
-      "listitem": "Update Users",
+      "listitem": "User Recon",
       "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
       "progresstext": "Updating Inventory",
       "trigger_list": [
@@ -40,7 +40,11 @@
       "trigger_list": [
         {
           "trigger": "dep_install_rosetta",
-          "validation": "rosetta"
+          "validation": "None"
+        },
+        {
+          "trigger": "rosetta",
+          "validation": "Local"
         }
       ]
     },
@@ -69,7 +73,7 @@
     {
       "listitem": "Install XCreds",
       "icon": "/tmp/SetupYourMac/Icons/XCreds.png",
-      "progresstext": "Installing NoMAD Login",
+      "progresstext": "Installing XCreds",
       "trigger_list": [
         {
           "trigger": "xcreds",
@@ -94,7 +98,7 @@
       "progresstext": "Installing Sophos",
       "trigger_list": [
         {
-          "trigger": "41",
+          "trigger": "sophos",
           "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
         }
       ]
@@ -105,7 +109,7 @@
       "progresstext": "Installing Creative Cloud",
       "trigger_list": [
         {
-          "trigger": "38",
+          "trigger": "adobe_creative_cloud",
           "validation": "/Applications/Utilities/Adobe Creative Cloud/ACC/Creative Cloud.app/Contents/Info.plist"
         }
       ]
@@ -149,13 +153,13 @@
       "progresstext": "Installing Zoom",
       "trigger_list": [
         {
-          "trigger": "107",
+          "trigger": "zoom",
           "validation": "/Applications/zoom.us.app/Contents/Info.plist"
         }
       ]
     },
     {
-      "listitem": "Update Inventory",
+      "listitem": "Final Recon",
       "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
       "progresstext": "Updating Inventory",
       "trigger_list": [

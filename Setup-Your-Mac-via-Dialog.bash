@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-8"
+scriptVersion="1.13.0-9"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -1634,8 +1634,6 @@ EOF
 		# Computer/User Name
 		if [[ -n "${userName}" ]]; then
 			updateScriptLog "WELCOME DIALOG: Set Computer Name …"
-			currentComputerName=$(scutil --get ComputerName)
-			currentLocalHostName=$(scutil --get LocalHostName)
 
 			###
 			# Try (well not try...) to Generate Computer Name
@@ -1670,6 +1668,7 @@ EOF
 			esac
 
 			computerName="${campusPrefix}${positionPrefix}-${userNameUpper}"
+			currentComputerName=$(scutil --get ComputerName)
 
 			if [[ "${debugMode}" == "true" ]] || [[ "${debugMode}" == "verbose" ]]; then
 
