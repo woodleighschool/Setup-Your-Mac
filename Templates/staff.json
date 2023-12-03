@@ -49,12 +49,12 @@
       ]
     },
     {
-      "listitem": "Install Woodleigh Tools",
+      "listitem": "Install Outset Scripts",
       "icon": "/tmp/SetupYourMac/Icons/Branding.png",
       "progresstext": "Installing Dockutil, Desktoppr and Branding",
       "trigger_list": [
         {
-          "trigger": "dep_branding_tools",
+          "trigger": "outset_scripts",
           "validation": "None"
         }
       ]
