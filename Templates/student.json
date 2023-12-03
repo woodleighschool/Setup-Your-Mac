@@ -82,17 +82,6 @@
       ]
     },
     {
-      "listitem": "Configure Sudo Lock",
-      "icon": "/tmp/SetupYourMac/Icons/SudoLock.png",
-      "progresstext": "Locking Down Sudo to Authorised Users",
-      "trigger_list": [
-        {
-          "trigger": "outset_sudolock",
-          "validation": "None"
-        }
-      ]
-    },
-    {
       "listitem": "Sophos",
       "icon": "/tmp/SetupYourMac/Icons/Sophos.png",
       "progresstext": "Installing Sophos",

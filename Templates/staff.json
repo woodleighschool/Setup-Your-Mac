@@ -71,6 +71,17 @@
       ]
     },
     {
+		"listitem": "Remove Sudo Lock",
+		"icon": "/tmp/SetupYourMac/Icons/SudoLock.png",
+		"progresstext": "Removing sudo lock if it was already set",
+		"trigger_list": [
+		  {
+			"trigger": "remove_sudo_lock",
+			"validation": "None"
+		  }
+		]
+	  },
+    {
       "listitem": "Install XCreds",
       "icon": "/tmp/SetupYourMac/Icons/XCreds.png",
       "progresstext": "Installing XCreds",
