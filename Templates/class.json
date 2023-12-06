@@ -1,0 +1,177 @@
+{
+  "steps": [
+    {
+      "listitem": "Setup Student Woodmin",
+      "icon": "/tmp/SetupYourMac/Icons/Branding.png",
+      "progresstext": "Creating the Woodleigh Admin Account",
+      "trigger_list": [
+        {
+          "trigger": "dep_student_woodmin",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Setup Token Admin",
+      "icon": "/tmp/SetupYourMac/Icons/Branding.png",
+      "progresstext": "Updating Token Admin Password and Generating Bootstrap Token",
+      "trigger_list": [
+        {
+          "trigger": "dep_setup_tokenadmin",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "User Recon",
+      "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
+      "progresstext": "Updating Inventory",
+      "trigger_list": [
+        {
+          "trigger": "recon",
+          "validation": "recon"
+        }
+      ]
+    },
+    {
+      "listitem": "Install Rosetta",
+      "icon": "/tmp/SetupYourMac/Icons/Rosetta.png",
+      "progresstext": "Installing Rosetta",
+      "trigger_list": [
+        {
+          "trigger": "dep_install_rosetta",
+          "validation": "None"
+        },
+        {
+          "trigger": "rosetta",
+          "validation": "Local"
+        }
+      ]
+    },
+    {
+      "listitem": "Install Outset Scripts",
+      "icon": "/tmp/SetupYourMac/Icons/Branding.png",
+      "progresstext": "Installing Dockutil, Desktoppr and Branding",
+      "trigger_list": [
+        {
+          "trigger": "outset_scripts",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Install Printers",
+      "icon": "/tmp/SetupYourMac/Icons/Printer.png",
+      "progresstext": "Adding Printers",
+      "trigger_list": [
+        {
+          "trigger": "printers",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Install XCreds",
+      "icon": "/tmp/SetupYourMac/Icons/XCreds.png",
+      "progresstext": "Installing XCreds",
+      "trigger_list": [
+        {
+          "trigger": "xcreds",
+          "validation": "/Applications/XCreds.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Sophos",
+      "icon": "/tmp/SetupYourMac/Icons/Sophos.png",
+      "progresstext": "Installing Sophos",
+      "trigger_list": [
+        {
+          "trigger": "sophos",
+          "validation": "/Applications/Sophos/Sophos Endpoint.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Linewize Connect",
+      "icon": "/tmp/SetupYourMac/Icons/LinewizeConnect.png",
+      "progresstext": "Installing Linewize Connect",
+      "trigger_list": [
+        {
+          "trigger": "linewize_connect",
+          "validation": "/Applications/macappproxy.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Adobe Creative Cloud",
+      "icon": "/tmp/SetupYourMac/Icons/CreativeCloud.png",
+      "progresstext": "Installing Creative Cloud",
+      "trigger_list": [
+        {
+          "trigger": "adobe_creative_cloud",
+          "validation": "/Applications/Utilities/Adobe Creative Cloud/ACC/Creative Cloud.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Microsoft 365 Suite",
+      "icon": "/tmp/SetupYourMac/Icons/Microsoft365Suite.png",
+      "progresstext": "Installing Microsoft 365 Suite",
+      "trigger_list": [
+        {
+          "trigger": "microsoft_365_suite",
+          "validation": "/Applications/Microsoft Word.app/Contents/Info.plist"
+        },
+        {
+          "trigger": "microsoftvl",
+          "validation": "None"
+        }
+      ]
+    },
+    {
+      "listitem": "Google Chrome",
+      "icon": "/tmp/SetupYourMac/Icons/GoogleChrome.png",
+      "progresstext": "Installing Chrome",
+      "trigger_list": [
+        {
+          "trigger": "google_chrome",
+          "validation": "/Applications/Google Chrome.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Vivi",
+      "icon": "/tmp/SetupYourMac/Icons/Vivi.png",
+      "progresstext": "Installing Vivi",
+      "trigger_list": [
+        {
+          "trigger": "vivi",
+          "validation": "/Applications/Vivi.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "zoom.us",
+      "icon": "/tmp/SetupYourMac/Icons/Zoom.png",
+      "progresstext": "Installing Zoom",
+      "trigger_list": [
+        {
+          "trigger": "zoom",
+          "validation": "/Applications/zoom.us.app/Contents/Info.plist"
+        }
+      ]
+    },
+    {
+      "listitem": "Final Recon",
+      "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
+      "progresstext": "Updating Inventory",
+      "trigger_list": [
+        {
+          "trigger": "recon",
+          "validation": "recon"
+        }
+      ]
+    }
+  ]
+}

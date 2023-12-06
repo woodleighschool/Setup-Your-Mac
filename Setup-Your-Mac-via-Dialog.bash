@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-12"
+scriptVersion="1.13.0-14"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -686,9 +686,19 @@ function policyJSONConfiguration() {
 		policyJSON="$(cat /tmp/SetupYourMac/Templates/staff.json)"
 		;;
 
+	"Class")
+		# Fetch JSON data for Class configuration
+		policyJSON="$(cat /tmp/SetupYourMac/Templates/class.json)"
+		;;
+
+	"Student")
+		# Fetch JSON data for Class configuration
+		policyJSON="$(cat /tmp/SetupYourMac/Templates/student.json)"
+		;;
+
 	*) # Catch-all
 		# Fetch default JSON data
-		policyJSON="$(cat /tmp/SetupYourMac/Templates/student.json)"
+		policyJSON=""
 		;;
 
 	esac
@@ -1594,7 +1604,7 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 		case "$position" in
 		Class)
-			symConfiguration="Students"
+			symConfiguration="Class"
 			;;
 		Student)
 			symConfiguration="Students"
