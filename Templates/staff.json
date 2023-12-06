@@ -49,10 +49,14 @@
       ]
     },
     {
-      "listitem": "Install Outset Scripts",
+      "listitem": "Install Branding Tools",
       "icon": "/tmp/SetupYourMac/Icons/Branding.png",
       "progresstext": "Installing Dockutil, Desktoppr and Branding",
       "trigger_list": [
+        {
+          "trigger": "branding_tools",
+          "validation": "None"
+        },
         {
           "trigger": "outset_scripts",
           "validation": "None"
@@ -71,16 +75,16 @@
       ]
     },
     {
-		"listitem": "Remove Sudo Lock",
-		"icon": "/tmp/SetupYourMac/Icons/SudoLock.png",
-		"progresstext": "Removing sudo lock if it was already set",
-		"trigger_list": [
-		  {
-			"trigger": "remove_sudo_lock",
-			"validation": "None"
-		  }
-		]
-	  },
+      "listitem": "Remove Sudo Lock",
+      "icon": "/tmp/SetupYourMac/Icons/SudoLock.png",
+      "progresstext": "Removing sudo lock if it was already set",
+      "trigger_list": [
+        {
+          "trigger": "remove_sudo_lock",
+          "validation": "None"
+        }
+      ]
+    },
     {
       "listitem": "Install XCreds",
       "icon": "/tmp/SetupYourMac/Icons/XCreds.png",

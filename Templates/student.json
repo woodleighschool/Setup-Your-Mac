@@ -49,10 +49,14 @@
       ]
     },
     {
-      "listitem": "Install Outset Scripts",
+      "listitem": "Install Branding Tools",
       "icon": "/tmp/SetupYourMac/Icons/Branding.png",
       "progresstext": "Installing Dockutil, Desktoppr and Branding",
       "trigger_list": [
+        {
+          "trigger": "branding_tools",
+          "validation": "None"
+        },
         {
           "trigger": "outset_scripts",
           "validation": "None"
