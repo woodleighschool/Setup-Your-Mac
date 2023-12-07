@@ -1662,7 +1662,7 @@ EOF
 			Staff)
 				positionPrefix="T" # Position prefix for staff
 				;;
-			Class)
+			Shared)
 				positionPrefix="C" # Position prefix for classes
 				;;
 			esac

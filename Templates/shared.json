@@ -23,7 +23,7 @@
       ]
     },
     {
-      "listitem": "User Recon",
+      "listitem": "Inventory Update",
       "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
       "progresstext": "Updating Inventory",
       "trigger_list": [
@@ -34,7 +34,7 @@
       ]
     },
     {
-      "listitem": "Install Rosetta",
+      "listitem": "Rosetta",
       "icon": "/tmp/SetupYourMac/Icons/Rosetta.png",
       "progresstext": "Installing Rosetta",
       "trigger_list": [
@@ -49,7 +49,7 @@
       ]
     },
     {
-      "listitem": "Install Branding Tools",
+      "listitem": "Setup Woodleigh Tools",
       "icon": "/tmp/SetupYourMac/Icons/Branding.png",
       "progresstext": "Installing Dockutil, Desktoppr and Branding",
       "trigger_list": [
@@ -64,7 +64,7 @@
       ]
     },
     {
-      "listitem": "Install Printers",
+      "listitem": "Setup Printers",
       "icon": "/tmp/SetupYourMac/Icons/Printer.png",
       "progresstext": "Adding Printers",
       "trigger_list": [
@@ -167,7 +167,7 @@
       ]
     },
     {
-      "listitem": "Final Recon",
+      "listitem": "Update Inventory",
       "icon": "/tmp/SetupYourMac/Icons/Inventory.png",
       "progresstext": "Updating Inventory",
       "trigger_list": [
