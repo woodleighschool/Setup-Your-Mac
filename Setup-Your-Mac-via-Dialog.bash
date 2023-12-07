@@ -34,7 +34,7 @@
 # Script Version and Jamf Pro Script Parameters
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-scriptVersion="1.13.0-15"
+scriptVersion="1.13.0-16"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
@@ -84,7 +84,7 @@ buildingsListRaw="Minimbah,Penbank,Senior Campus"
 buildingsList=$(echo "${buildingsListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
 
 # [SYM-Helper] An unsorted, comma-separated list of departments (with possible duplication). If empty, this will be hidden from the user info prompt
-departmentListRaw="Student,Staff,Class"
+departmentListRaw="Student,Staff,Shared"
 
 # A sorted, unique, JSON-compatible list of departments
 departmentList=$(echo "${departmentListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
@@ -686,9 +686,9 @@ function policyJSONConfiguration() {
 		policyJSON="$(cat /tmp/SetupYourMac/Templates/staff.json)"
 		;;
 
-	"Class")
+	"Shared")
 		# Fetch JSON data for Class configuration
-		policyJSON="$(cat /tmp/SetupYourMac/Templates/class.json)"
+		policyJSON="$(cat /tmp/SetupYourMac/Templates/shared.json)"
 		;;
 
 	"Student")
@@ -1602,17 +1602,7 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		# Select `policyJSON` based on selected Configuration
 		###
 
-		case "$position" in
-		Class)
-			symConfiguration="Class"
-			;;
-		Student)
-			symConfiguration="Students"
-			;;
-		Staff)
-			symConfiguration="Staff"
-			;;
-		esac
+		symConfiguration="${position}"
 
 		policyJSONConfiguration
 
