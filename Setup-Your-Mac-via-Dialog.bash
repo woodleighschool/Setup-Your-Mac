@@ -11,7 +11,7 @@
 # HISTORY
 #
 #   Version 1.13.0, 24-Oct-2023, Dan K. Snelson (@dan-snelson)
-#   - 🔥 **Breaking Change** for users of Setup Your Mac prior to `1.13.0` 🔥
+#   - � **Breaking Change** for users of Setup Your Mac prior to `1.13.0` �
 #       - Removed `setupYourMacPolicyArrayIconPrefixUrl` (in favor using the fully qualified domain name of the server which hosts your icons)
 #   - Added [SYM-Helper] to identify variables which can be configured in SYM-Helper (0.8.0)
 #   - Updated sample banner image (Image by pikisuperstar on Freepik)
@@ -36,11 +36,11 @@
 
 scriptVersion="1.13.0-16"
 export PATH=/usr/bin:/bin:/usr/sbin:/sbin
-scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organization's default location for client-side logs)
+scriptLog="${4:-"/var/log/org.churchofjesuschrist.log"}"                    # Parameter 4: Script Log Location [ /var/log/org.churchofjesuschrist.log ] (i.e., Your organisation's default location for client-side logs)
 debugMode="${5:-"verbose"}"                                                 # Parameter 5: Debug Mode [ verbose (default) | true | false ]
 welcomeDialog="${6:-"userInput"}"                                           # Parameter 6: Welcome dialog [ userInput ]
 completionActionOption="${7:-"Restart Attended"}"                           # Parameter 7: Completion Action [ wait | sleep (with seconds) | Shut Down | Shut Down Attended | Shut Down Confirm | Restart | Restart Attended (default) | Restart Confirm | Log Out | Log Out Attended | Log Out Confirm ]
-requiredMinimumBuild="${8:-"disabled"}"                                     # Parameter 8: Required Minimum Build [ disabled (default) | 22E ] (i.e., Your organization's required minimum build of macOS to allow users to proceed; use "22E" for macOS 13.3)
+requiredMinimumBuild="${8:-"disabled"}"                                     # Parameter 8: Required Minimum Build [ disabled (default) | 22E ] (i.e., Your organisation's required minimum build of macOS to allow users to proceed; use "22E" for macOS 13.3)
 outdatedOsAction="${9:-"/System/Library/CoreServices/Software Update.app"}" # Parameter 9: Outdated OS Action [ /System/Library/CoreServices/Software Update.app (default) | jamfselfservice://content?entity=policy&id=117&action=view ] (i.e., Jamf Pro Self Service policy ID for operating system ugprades)
 webhookURL="${10:-""}"                                                      # Parameter 10: Microsoft Teams or Slack Webhook URL [ Leave blank to disable (default) | https://microsoftTeams.webhook.com/URL | https://hooks.slack.com/services/URL ] Can be used to send a success or failure message to Microsoft Teams or Slack via Webhook. (Function will automatically detect if Webhook URL is for Slack or Teams; can be modified to include other communication tools that support functionality.)
 presetConfiguration="${11:-""}"                                             # Parameter 11: Specify a Configuration (i.e., `policyJSON`; NOTE: If set, `promptForConfiguration` will be automatically suppressed and the preselected configuration will be used instead)
@@ -54,22 +54,14 @@ debugModeSleepAmount="3" # Delay for various actions when running in Debug Mode
 failureDialog="true"     # Display the so-called "Failure" dialog (after the main SYM dialog) [ true | false ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Welcome Message User Input Customization Choices (thanks, @rougegoat!)
+# Welcome Message User Input Customisation Choices (thanks, @rougegoat!)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # [SYM-Helper] These control which user input boxes are added to the first page of Setup Your Mac. If you do not want to ask about a value, set it to any other value
 promptForUsername="true"
-prefillUsername="false" # prefills the currently logged in user's username
-promptForRealName="false"
-prefillRealname="false" # prefills the currently logged in user's fullname
-promptForEmail="false"
-promptForComputerName="false"
 promptForAssetTag="true"
-promptForRoom="false"
 promptForBuilding="true"
 promptForDepartment="true"
-promptForPosition="false"      # When set to true dynamically prompts the user to select from a list of positions or manually enter one at the welcomeDialog, see "positionListRaw" to define the selection / entry type
-promptForConfiguration="false" # Removes the Configuration dropdown entirely and uses the "Catch-all (i.e., used when `welcomeDialog` is set to `video` or `false`)" or presetConfiguration policyJSON
 
 # Set to "true" to suppress the Update Inventory option on policies that are called
 suppressReconOnPolicy="false"
@@ -84,22 +76,15 @@ buildingsListRaw="Minimbah,Penbank,Senior Campus"
 buildingsList=$(echo "${buildingsListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
 
 # [SYM-Helper] An unsorted, comma-separated list of departments (with possible duplication). If empty, this will be hidden from the user info prompt
-departmentListRaw="Student,Staff,Shared"
+departmentListRaw="Teacher,CRT,Student,Spare,SAC"
 
 # A sorted, unique, JSON-compatible list of departments
 departmentList=$(echo "${departmentListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
 
-# An unsorted, comma-separated list of departments (with possible duplication). If empty and promptForPosition is "true" a user-input box will be shown instead of a dropdown
-positionListRaw="Developer,Management,Sales,Marketing"
-
-# A sorted, unique, JSON-compatible list of positions
-positionList=$(echo "${positionListRaw}" | tr ',' '\n' | sort -f | uniq | sed -e 's/^/\"/' -e 's/$/\",/' -e '$ s/.$//')
-
 # [SYM-Helper] Branding overrides
-brandingBanner="" # Image by pikisuperstar on Freepik
 brandingBannerDisplayText="false"
-brandingIconLight="/tmp/SetupYourMac/Icons/Logo.png"
-brandingIconDark="/tmp/SetupYourMac/Icons/Logo.png"
+brandingIconLight="https://r2-d2.woodleigh.vic.edu.au/Icons/Logo.png"
+brandingIconDark="https://r2-d2.woodleigh.vic.edu.au/Icons/Logo.png"
 
 # [SYM-Helper] IT Support Variables - Use these if the default text is fine but you want your org's info inserted instead
 supportTeamName="Woodleigh HelpDesk"
@@ -136,6 +121,7 @@ exitCode="0"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 if [[ ! -f "${scriptLog}" ]]; then
+	mkdir -p "$(dirname "${scriptLog}")"
 	touch "${scriptLog}"
 fi
 
@@ -226,6 +212,16 @@ loggedInUserFirstname=$(echo "$loggedInUserFullname" | sed -E 's/^.*, // ; s/([^
 loggedInUserID=$(id -u "${loggedInUser}")
 updateScriptLog "PRE-FLIGHT CHECK: Current Logged-in User First Name: ${loggedInUserFirstname}"
 updateScriptLog "PRE-FLIGHT CHECK: Current Logged-in User ID: ${loggedInUserID}"
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Pre-flight Check: Don't Allow Script to be Ran By Anyone
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+if [ "$loggedInUser" != "tokenadmin" ] && [ "$loggedInUser" != "woodmin" ]; then
+	/usr/local/bin/dialog --icon warning --mini --title "Permission Denied" --message "You are not permitted to use this utility."
+	updateScriptLog "PRE-FLIGHT CHECK: The script can only be run by 'tokenadmin' or 'woodmin'. Exiting..."
+	exit 1
+fi
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Pre-flight Check: Validate Operating System Version and Build
@@ -464,9 +460,13 @@ if [ -n "$plistAssetTag" ]; then
 fi
 if [ -n "$plistCampus" ]; then
 	campusPrefil="${plistCampus}"
+else
+	campusPrefil="Senior Campus"
 fi
 if [ -n "$plistPosition" ]; then
 	positionPrefil="${plistPosition}"
+else
+	positionPrefil="Student"
 fi
 if [ -n "$plistUsername" ]; then
 	usernamePrefil=',"value" : "'${plistUsername}'"'
@@ -595,7 +595,7 @@ helpmessage+="- **Serial Number:** ${serialNumber}  \n"
 helpmessage+="- **Dialog:** ${dialogVersion}  \n"
 helpmessage+="- **Started:** ${timestamp}"
 
-infobox="Analyzing input …" # Customize at "Update Setup Your Mac's infobox"
+infobox="Analyzing input …" # Customise at "Update Setup Your Mac's infobox"
 
 # Create `overlayicon` from Self Service's custom icon (thanks, @meschwartz!)
 xxd -p -s 260 "$(defaults read /Library/Preferences/com.jamfsoftware.jamf self_service_app_path)"/Icon$'\r'/..namedfork/rsrc | xxd -r -p >/var/tmp/overlayicon.icns
@@ -623,7 +623,7 @@ dialogSetupYourMacCMD="$dialogBinary \
 --icon \"$icon\" \
 --infobox \"${infobox}\" \
 --progress \
---progresstext \"Initializing configuration …\" \
+--progresstext \"Initialising configuration …\" \
 --button1text \"Wait\" \
 --button1disabled \
 --infotext \"$scriptVersion\" \
@@ -683,22 +683,27 @@ function policyJSONConfiguration() {
 
 	"Staff")
 		# Fetch JSON data for Staff configuration
-		policyJSON="$(cat /tmp/SetupYourMac/Templates/staff.json)"
+		policyJSON="$(curl -L https://r2-d2.woodleigh.vic.edu.au/SYM/Initial/Templates/staff.json)"
 		;;
 
 	"Shared")
 		# Fetch JSON data for Class configuration
-		policyJSON="$(cat /tmp/SetupYourMac/Templates/shared.json)"
+		policyJSON="$(curl -L https://r2-d2.woodleigh.vic.edu.au/SYM/Initial/Templates/shared.json)"
 		;;
 
 	"Student")
-		# Fetch JSON data for Class configuration
-		policyJSON="$(cat /tmp/SetupYourMac/Templates/student.json)"
+		# Fetch JSON data for Student configuration
+		policyJSON="$(curl -L https://r2-d2.woodleigh.vic.edu.au/SYM/Initial/Templates/student.json)"
+		;;
+
+	"SAC")
+		# Fetch JSON data for Student configuration
+		policyJSON="$(curl -L https://r2-d2.woodleigh.vic.edu.au/SYM/Initial/Templates/sac.json)"
 		;;
 
 	*) # Catch-all
 		# Fetch default JSON data
-		policyJSON=""
+		policyJSON="https://r2-d2.woodleigh.vic.edu.au/SYM/Initial/Templates/student.json"
 		;;
 
 	esac
@@ -1369,70 +1374,22 @@ function completionAction() {
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Welcome dialog 'infobox' animation (thanks, @bartreadon!)
-# To convert emojis, see: https://r12a.github.io/app-conversion/
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-function welcomeDialogInfoboxAnimation() {
-	callingPID=$1
-	# clock_emojis=("🕐" "🕑" "🕒" "🕓" "🕔" "🕕" "🕖" "🕗" "🕘" "🕙" "🕚" "🕛")
-	clock_emojis=("&#128336;" "&#128337;" "&#128338;" "&#128339;" "&#128340;" "&#128341;" "&#128342;" "&#128343;" "&#128344;" "&#128345;" "&#128346;" "&#128347;")
-	while true; do
-		for emoji in "${clock_emojis[@]}"; do
-			if kill -0 "$callingPID" 2>/dev/null; then
-				dialogUpdateWelcome "infobox: Waiting For Network $emoji"
-			else
-				break
-			fi
-			sleep 0.6
-		done
-	done
-}
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Setup Your Mac dialog 'infobox' animation (thanks, @bartreadon!)
-# To convert emojis, see: https://r12a.github.io/app-conversion/
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-function setupYourMacDialogInfoboxAnimation() {
-	callingPID=$1
-	# clock_emojis=("🕐" "🕑" "🕒" "🕓" "🕔" "🕕" "🕖" "🕗" "🕘" "🕙" "🕚" "🕛")
-	clock_emojis=("&#128336;" "&#128337;" "&#128338;" "&#128339;" "&#128340;" "&#128341;" "&#128342;" "&#128343;" "&#128344;" "&#128345;" "&#128346;" "&#128347;")
-	while true; do
-		for emoji in "${clock_emojis[@]}"; do
-			if kill -0 "$callingPID" 2>/dev/null; then
-				dialogUpdateSetupYourMac "infobox: Waiting For Network $emoji"
-			else
-				break
-			fi
-			sleep 0.6
-		done
-	done
-}
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Check Network Quality for Configurations (thanks, @bartreadon!)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 function checkNetworkConnectivity() {
-	myPID="$$"
-	updateScriptLog "WELCOME DIALOG: Display Welcome dialog 'infobox' animation …"
-	welcomeDialogInfoboxAnimation "$myPID" &
-	welcomeDialogInfoboxAnimationPID="$!"
-
-	while true; do
-		if curl -s --connect-timeout 5 https://wdm.jamfcloud.com >/dev/null; then
-			updateScriptLog "WELCOME DIALOG: Successfully connected to wdm.jamfcloud.com"
-			break
-		else
-			updateScriptLog "WELCOME DIALOG: Retrying connection to wdm.jamfcloud.com"
-			sleep 5
-		fi
+	for server in wdm.jamfcloud.com r2-d2.woodleigh.vic.edu.au; do
+		dialogUpdateWelcome "infobox: **Probing:** ${server}"
+		while true; do
+			if curl -s --connect-timeout 5 https://${server} >/dev/null; then
+				updateScriptLog "WELCOME DIALOG: Successfully connected to ${server}"
+				break
+			else
+				updateScriptLog "WELCOME DIALOG: Retrying connection to ${server}"
+				sleep 5
+			fi
+		done
 	done
-
-	kill ${welcomeDialogInfoboxAnimationPID}
-
-	updateScriptLog "WELCOME DIALOG: Completed wdm.jamfcloud.com connectivity check …"
 
 	# Update the dialog to reflect the connectivity check
 	dialogUpdateWelcome "infobox: **Connected**"
@@ -1586,8 +1543,8 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 
 		userName=$(get_json_value_welcomeDialog "$welcomeResults" "Username")
 		assetTag=$(get_json_value_welcomeDialog "$welcomeResults" "Asset Tag")
-		position=$(get_json_value_welcomeDialog "$welcomeResults" "Position" "selectedValue" | grep -v "Please select your department")
-		campus=$(get_json_value_welcomeDialog "$welcomeResults" "Campus" "selectedValue" | grep -v "Please select your building")
+		position=$(get_json_value_welcomeDialog "$welcomeResults" "Position" "selectedValue")
+		campus=$(get_json_value_welcomeDialog "$welcomeResults" "Campus" "selectedValue")
 
 		###
 		# Output the various values from the welcomeResults JSON to the log file
@@ -1602,13 +1559,36 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		# Select `policyJSON` based on selected Configuration
 		###
 
-		symConfiguration="${position}"
+		case "${position}" in
+		"Student")
+			symConfiguration="Student"
+			position="Student"
+			;;
+		"Spare")
+			symConfiguration="Shared"
+			position="Shared"
+			department="Spares"
+			;;
+		"CRT" | "Teacher")
+			symConfiguration="Staff"
+			position="Staff"
+			department="Staff"
+			;;
+		"SAC")
+			symConfiguration="SAC"
+			position="Shared"
+			department="SAC"
+			;;
+		esac
 
 		policyJSONConfiguration
 
 		###
 		# Create UserInfo properly list based on supplied paramaters
 		###
+		# Unlock the plist
+		touch /Users/Shared/UserInfo.plist &>/dev/null || :
+		chflags noschg /Users/Shared/UserInfo.plist
 
 		cat >/Users/Shared/UserInfo.plist <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1620,12 +1600,14 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 	<key>Campus</key>
 	<string>$campus</string>
 	<key>Position</key>
-	<string>$position</string>
+	<string>$department</string>
 	<key>Username</key>
 	<string>$userName</string>
 </dict>
 </plist>
 EOF
+		# Lock the plist
+		chflags schg /Users/Shared/UserInfo.plist
 
 		###
 		# Evaluate Various User Input
@@ -1682,9 +1664,6 @@ EOF
 				updateScriptLog "WELCOME DIALOG: Renamed computer from: \"${currentComputerName}\" to \"${computerName}\" "
 
 			fi
-
-			# User Name
-			reconOptions+="-endUsername \"${userName}\" "
 		fi
 
 		# Asset Tag
@@ -1692,9 +1671,14 @@ EOF
 			reconOptions+="-assetTag \"${assetTag}\" "
 		fi
 
-		# Asset Tag
-		if [[ "${position}" == "Staff" ]]; then
-			reconOptions+="-department \"${position}\" "
+		# Department
+		if [[ -n "${department}" ]]; then
+			reconOptions+="-department \"${department}\" "
+		fi
+
+		# Username
+		if [[ -n "${userName}" ]]; then
+			reconOptions+="-endUsername \"${userName}\" "
 		fi
 
 		# Output `recon` options to log
@@ -1889,7 +1873,7 @@ dialogUpdateSetupYourMac "helpmessage: ${helpmessage}"
 
 for ((i = 0; i < dialog_step_length; i++)); do
 
-	# Initialize SECONDS
+	# Initialise SECONDS
 	SECONDS="0"
 
 	# Creating initial variables
