@@ -67,7 +67,7 @@ promptForDepartment="true"
 suppressReconOnPolicy="false"
 
 # Disables the Blurscreen enabled by default in Production
-moveableInProduction="false"
+moveableInProduction="true"
 
 # [SYM-Helper] An unsorted, comma-separated list of buildings (with possible duplication). If empty, this will be hidden from the user info prompt
 buildingsListRaw="Minimbah,Penbank,Senior Campus"
@@ -217,11 +217,7 @@ updateScriptLog "PRE-FLIGHT CHECK: Current Logged-in User ID: ${loggedInUserID}"
 # Pre-flight Check: Don't Allow Script to be Ran By Anyone
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-if [ "$loggedInUser" != "tokenadmin" ] && [ "$loggedInUser" != "woodmin" ]; then
-	/usr/local/bin/dialog --icon warning --mini --title "Permission Denied" --message "You are not permitted to use this utility."
-	updateScriptLog "PRE-FLIGHT CHECK: The script can only be run by 'tokenadmin' or 'woodmin'. Exiting..."
-	exit 1
-fi
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Pre-flight Check: Validate Operating System Version and Build
@@ -1286,9 +1282,6 @@ function completionAction() {
 
 		"Restart")
 			updateScriptLog "COMPLETION ACTION: Restart sans user interaction"
-			killProcess "Self Service"
-			# runAsUser osascript -e 'tell app "System Events" to restart'
-			# sleep 5 && runAsUser osascript -e 'tell app "System Events" to restart' &
 			sleep 5 && shutdown -r now &
 			;;
 
@@ -1562,21 +1555,17 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 		case "${position}" in
 		"Student")
 			symConfiguration="Student"
-			position="Student"
 			;;
 		"Spare")
 			symConfiguration="Shared"
-			position="Shared"
 			department="Spares"
 			;;
 		"CRT" | "Teacher")
 			symConfiguration="Staff"
-			position="Staff"
 			department="Staff"
 			;;
 		"SAC")
 			symConfiguration="SAC"
-			position="Shared"
 			department="SAC"
 			;;
 		esac
@@ -1600,7 +1589,7 @@ if [[ "${welcomeDialog}" == "userInput" ]]; then
 	<key>Campus</key>
 	<string>$campus</string>
 	<key>Position</key>
-	<string>$department</string>
+	<string>$position</string>
 	<key>Username</key>
 	<string>$userName</string>
 </dict>
@@ -1641,11 +1630,11 @@ EOF
 			Student)
 				positionPrefix="S" # Position prefix for students
 				;;
-			Staff)
+			CRT | Teacher)
 				positionPrefix="T" # Position prefix for staff
 				;;
-			Shared)
-				positionPrefix="C" # Position prefix for classes
+			Spare | SAC)
+				positionPrefix="C" # Position prefix for shared/class
 				;;
 			esac
 
